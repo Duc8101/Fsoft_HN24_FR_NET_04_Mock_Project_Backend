@@ -3,7 +3,7 @@ using Phone_Shop.DataAccess.UnitOfWorks;
 
 namespace Phone_Shop.Services.Base
 {
-    public class BaseService
+    public class BaseService : IBaseService
     {
         private protected readonly IUnitOfWork _unitOfWork;
         private protected readonly IMapper _mapper;

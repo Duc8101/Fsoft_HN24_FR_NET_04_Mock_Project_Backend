@@ -4,7 +4,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Phone_Shop.Common.Configuration;
 using Phone_Shop.DataAccess.DBContext;
+using Phone_Shop.DataAccess.Repositories.Common;
 using Phone_Shop.DataAccess.UnitOfWorks;
+using Phone_Shop.Services.Base;
+using System.Reflection;
 using System.Text;
 
 namespace Phone_Shop.API
@@ -69,15 +72,34 @@ namespace Phone_Shop.API
                     .AllowAnyHeader();
             }));
 
+            // register db context
             builder.Services.AddDbContext<PhoneShopContext>();
+
+            // register auto mapper
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-            builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new MappingProfile());
             });
+
+            // register repository and UoW
+            builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            // -------------------------- register service ------------------------
+            Assembly assembly = typeof(IBaseService).Assembly;
+            Func<string, bool> condition = name => name.EndsWith("Service");
+            List<Type> types = assembly.GetTypes().Where(t => condition(t.Name) && t.IsClass && !t.IsAbstract)
+                .ToList();
+
+            foreach (Type type in types)
+            {
+                Type[] implementedInterfaces = type.GetInterfaces();
+                foreach (Type serviceType in implementedInterfaces)
+                {
+                    builder.Services.AddScoped(serviceType, type);
+                }
+            }
 
             var app = builder.Build();
 

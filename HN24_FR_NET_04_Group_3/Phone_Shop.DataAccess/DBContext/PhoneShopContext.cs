@@ -17,16 +17,6 @@ namespace Phone_Shop.DataAccess.DBContext
         {
         }
 
-        public virtual DbSet<Cart> Carts { get; set; }
-        public virtual DbSet<Category> Categories { get; set; }
-        public virtual DbSet<Client> Clients { get; set; }
-        public virtual DbSet<Order> Orders { get; set; }
-        public virtual DbSet<OrderDetail> OrderDetails { get; set; }
-        public virtual DbSet<Product> Products { get; set; }
-        public virtual DbSet<Role> Roles { get; set; }
-        public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<Feedback> Feedbacks { get; set; }
-        public virtual DbSet<FeedbackReply> FeedbackReplies { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
