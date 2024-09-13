@@ -5,8 +5,8 @@ namespace Phone_Shop.Services.Base
 {
     public class BaseService
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private protected readonly IUnitOfWork _unitOfWork;
+        private protected readonly IMapper _mapper;
 
         public BaseService(IUnitOfWork unitOfWork, IMapper mapper)
         {
