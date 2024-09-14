@@ -6,9 +6,13 @@
 
         void Update(TEntity entity);
 
+        void Delete(TEntity entity);
+
         void AddMultiple(IEnumerable<TEntity> entities);
 
         void UpdateMultiple(IEnumerable<TEntity> entities);
+
+        void DeleteMultiple(IEnumerable<TEntity> entities);
 
         Task AddAsync(TEntity entity);
 
