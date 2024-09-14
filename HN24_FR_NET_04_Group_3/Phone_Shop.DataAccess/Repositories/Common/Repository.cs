@@ -111,5 +111,27 @@ namespace Phone_Shop.DataAccess.Repositories.Common
             await _context.Set<TEntity>().AddRangeAsync(entities);
             await _context.SaveChangesAsync();
         }
+
+        public bool Any(Expression<Func<TEntity, bool>> predicate)
+        {
+            return _context.Set<TEntity>().Any(predicate);
+        }
+
+        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await _context.Set<TEntity>().AnyAsync(predicate);
+        }
+
+        public void Delete(TEntity entity)
+        {
+            _context.Set<TEntity>().Remove(entity);
+            _context.SaveChanges();
+        }
+
+        public void DeleteMultiple(IEnumerable<TEntity> entities)
+        {
+            _context.Set<TEntity>().RemoveRange(entities);
+            _context.SaveChanges();
+        }
     }
 }

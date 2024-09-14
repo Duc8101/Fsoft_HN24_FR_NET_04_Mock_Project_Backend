@@ -12,10 +12,14 @@ namespace Phone_Shop.DataAccess.Repositories.Queries
 
         TEntity? FindById(object id);
 
+        bool Any(Expression<Func<TEntity, bool>> predicate);
+
         Task<TEntity?> GetSingleAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates);
 
         Task<TEntity?> GetFirstAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates);
 
         Task<TEntity?> FindByIdAsync(object id);
+
+        Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate);
     }
 }
