@@ -87,7 +87,7 @@ namespace Phone_Shop.API
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             // -------------------------- register service ------------------------
-            Assembly assembly = typeof(IBaseService).Assembly;
+            Assembly assembly = typeof(BaseService).Assembly;
             Func<string, bool> condition = name => name.EndsWith("Service");
             List<Type> types = assembly.GetTypes().Where(t => condition(t.Name) && t.IsClass && !t.IsAbstract)
                 .ToList();

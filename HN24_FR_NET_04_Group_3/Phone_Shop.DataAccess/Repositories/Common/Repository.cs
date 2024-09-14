@@ -1,4 +1,5 @@
-﻿using Phone_Shop.DataAccess.DBContext;
+﻿using Microsoft.EntityFrameworkCore;
+using Phone_Shop.DataAccess.DBContext;
 using System.Linq.Expressions;
 
 namespace Phone_Shop.DataAccess.Repositories.Common
@@ -31,23 +32,6 @@ namespace Phone_Shop.DataAccess.Repositories.Common
             return query;
         }
 
-        public TEntity? GetSingle(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates)
-        {
-            IQueryable<TEntity> query = GetQuery(include, predicates);
-            return query.SingleOrDefault();
-        }
-
-        public TEntity? GetFirst(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates)
-        {
-            IQueryable<TEntity> query = GetQuery(include, predicates);
-            return query.FirstOrDefault();
-        }
-
-        public IQueryable<TEntity> GetAll(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates)
-        {
-            return GetQuery(include, predicates);
-        }
-
         public TEntity? FindById(object id)
         {
             return _context.Set<TEntity>().Find(id);
@@ -75,6 +59,86 @@ namespace Phone_Shop.DataAccess.Repositories.Common
         {
             _context.Set<TEntity>().UpdateRange(entities);
             _context.SaveChanges();
+        }
+
+        public IQueryable<TEntity> GetAll(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, Func<IQueryable<TEntity>, IQueryable<TEntity>>? sort, params Expression<Func<TEntity, bool>>[] predicates)
+        {
+            IQueryable<TEntity> query = GetQuery(include, predicates);
+            if (sort != null)
+            {
+                query = sort(query);
+            }
+            return query;
+        }
+
+        public TEntity? GetSingle(params Expression<Func<TEntity, bool>>[] predicates)
+        {
+            IQueryable<TEntity> query = GetQuery(null, predicates);
+            return query.SingleOrDefault();
+        }
+
+        public TEntity? GetFirst(params Expression<Func<TEntity, bool>>[] predicates)
+        {
+            IQueryable<TEntity> query = GetQuery(null, predicates);
+            return query.FirstOrDefault();
+        }
+
+        public IQueryable<TEntity> GetAll(params Expression<Func<TEntity, bool>>[] predicates)
+        {
+            return GetQuery(null, predicates);
+        }
+
+        public TEntity? GetSingle(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates)
+        {
+            IQueryable<TEntity> query = GetQuery(include, predicates);
+            return query.SingleOrDefault();
+        }
+
+        public TEntity? GetFirst(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates)
+        {
+            IQueryable<TEntity> query = GetQuery(include, predicates);
+            return query.FirstOrDefault();
+        }
+
+        public async Task<TEntity?> GetSingleAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates)
+        {
+            IQueryable<TEntity> query = GetQuery(include, predicates);
+            return await query.SingleOrDefaultAsync();
+        }
+
+        public async Task<TEntity?> GetFirstAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates)
+        {
+            IQueryable<TEntity> query = GetQuery(include, predicates);
+            return await query.FirstOrDefaultAsync();
+        }
+
+        public async Task<TEntity?> GetSingleAsync(params Expression<Func<TEntity, bool>>[] predicates)
+        {
+            IQueryable<TEntity> query = GetQuery(null, predicates);
+            return await query.SingleOrDefaultAsync();
+        }
+
+        public async Task<TEntity?> GetFirstAsync(params Expression<Func<TEntity, bool>>[] predicates)
+        {
+            IQueryable<TEntity> query = GetQuery(null, predicates);
+            return await query.FirstOrDefaultAsync();
+        }
+
+        public async Task<TEntity?> FindByIdAsync(object id)
+        {
+            return await _context.Set<TEntity>().FindAsync(id);
+        }
+
+        public async Task AddAsync(TEntity entity)
+        {
+            await _context.Set<TEntity>().AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddMultipleAsync(IEnumerable<TEntity> entities)
+        {
+            await _context.Set<TEntity>().AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
         }
     }
 }
