@@ -71,23 +71,6 @@ namespace Phone_Shop.DataAccess.Repositories.Common
             return query;
         }
 
-        public TEntity? GetSingle(params Expression<Func<TEntity, bool>>[] predicates)
-        {
-            IQueryable<TEntity> query = GetQuery(null, predicates);
-            return query.SingleOrDefault();
-        }
-
-        public TEntity? GetFirst(params Expression<Func<TEntity, bool>>[] predicates)
-        {
-            IQueryable<TEntity> query = GetQuery(null, predicates);
-            return query.FirstOrDefault();
-        }
-
-        public IQueryable<TEntity> GetAll(params Expression<Func<TEntity, bool>>[] predicates)
-        {
-            return GetQuery(null, predicates);
-        }
-
         public TEntity? GetSingle(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates)
         {
             IQueryable<TEntity> query = GetQuery(include, predicates);
@@ -109,18 +92,6 @@ namespace Phone_Shop.DataAccess.Repositories.Common
         public async Task<TEntity?> GetFirstAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates)
         {
             IQueryable<TEntity> query = GetQuery(include, predicates);
-            return await query.FirstOrDefaultAsync();
-        }
-
-        public async Task<TEntity?> GetSingleAsync(params Expression<Func<TEntity, bool>>[] predicates)
-        {
-            IQueryable<TEntity> query = GetQuery(null, predicates);
-            return await query.SingleOrDefaultAsync();
-        }
-
-        public async Task<TEntity?> GetFirstAsync(params Expression<Func<TEntity, bool>>[] predicates)
-        {
-            IQueryable<TEntity> query = GetQuery(null, predicates);
             return await query.FirstOrDefaultAsync();
         }
 
