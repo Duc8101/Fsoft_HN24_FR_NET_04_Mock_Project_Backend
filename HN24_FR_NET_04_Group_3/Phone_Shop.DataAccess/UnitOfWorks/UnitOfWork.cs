@@ -1,4 +1,6 @@
-﻿using Phone_Shop.DataAccess.DBContext;
+﻿using Phone_Shop.Common.Entity;
+using Phone_Shop.DataAccess.DBContext;
+using Phone_Shop.DataAccess.Repositories.Common;
 
 namespace Phone_Shop.DataAccess.UnitOfWorks
 {
@@ -6,11 +8,41 @@ namespace Phone_Shop.DataAccess.UnitOfWorks
     {
 
         private readonly PhoneShopContext _context;
+        private readonly IRepository<User> _userRepository;
+        private readonly IRepository<Client> _clientRepository;
+        private readonly IRepository<UserClient> _userClientRepository;
+        private readonly IRepository<Cart> _cartRepository;
+        private readonly IRepository<Product> _productRepository;
+        private readonly IRepository<Order> _orderRepository;
+        private readonly IRepository<OrderDetail> _orderDetailRepository;
 
-        public UnitOfWork(PhoneShopContext context)
+        public UnitOfWork(PhoneShopContext context, IRepository<User> userRepository, IRepository<Client> clientRepository
+            , IRepository<UserClient> userClientRepository, IRepository<Cart> cartRepository, IRepository<Product> productRepository
+            , IRepository<Order> orderRepository, IRepository<OrderDetail> orderDetailRepository)
         {
             _context = context;
+            _userRepository = userRepository;
+            _clientRepository = clientRepository;
+            _userClientRepository = userClientRepository;
+            _cartRepository = cartRepository;
+            _productRepository = productRepository;
+            _orderRepository = orderRepository;
+            _orderDetailRepository = orderDetailRepository;
         }
+
+        public IRepository<User> UserRepository => _userRepository;
+
+        public IRepository<Client> ClientRepository => _clientRepository;
+
+        public IRepository<UserClient> UserClientRepository => _userClientRepository;
+
+        public IRepository<Cart> CartRepository => _cartRepository;
+
+        public IRepository<Product> ProductRepository => _productRepository;
+
+        public IRepository<Order> OrderRepository => _orderRepository;
+
+        public IRepository<OrderDetail> OrderDetailRepository => _orderDetailRepository;
 
         public void BeginTransaction()
         {
