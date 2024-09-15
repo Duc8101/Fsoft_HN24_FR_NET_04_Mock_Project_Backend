@@ -12,7 +12,6 @@ using Phone_Shop.Services.Base;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
 using System.Net;
-using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 
 namespace Phone_Shop.Services.Users
@@ -117,7 +116,6 @@ namespace Phone_Shop.Services.Users
             }
         }
 
-        [SupportedOSPlatform("windows")]
         public ResponseBase GetUserByToken(string token)
         {
             try
@@ -176,7 +174,6 @@ namespace Phone_Shop.Services.Users
             }
         }
 
-        [SupportedOSPlatform("windows")]
         public ResponseBase Login(LoginDTO DTO)
         {
             try
