@@ -106,12 +106,11 @@ namespace Phone_Shop.API
             // Configure the HTTP request pipeline.
 
             app.UseHttpsRedirection();
-
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();  
             app.UseSwagger();
             app.UseSwaggerUI();
-
+            app.UseCors("AllowOrigin");
             app.MapControllers();
 
             app.Run();
