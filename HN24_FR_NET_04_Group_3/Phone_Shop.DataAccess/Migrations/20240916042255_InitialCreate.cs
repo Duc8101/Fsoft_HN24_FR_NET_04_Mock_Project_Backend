@@ -94,7 +94,7 @@ namespace Phone_Shop.DataAccess.Migrations
                     user_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     full_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    phone = table.Column<string>(type: "char(10)", fixedLength : true, nullable: true),
+                    phone = table.Column<string>(type: "char(10)", fixedLength: true, nullable: true),
                     email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
@@ -123,11 +123,7 @@ namespace Phone_Shop.DataAccess.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     customer_id = table.Column<int>(type: "int", nullable: false),
                     product_id = table.Column<int>(type: "int", nullable: false),
-                    quantity = table.Column<int>(type: "int", nullable: false),
-                    is_checkout = table.Column<bool>(type: "bit", nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    update_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    is_deleted = table.Column<bool>(type: "bit", nullable: false)
+                    quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -141,6 +137,43 @@ namespace Phone_Shop.DataAccess.Migrations
                     table.ForeignKey(
                         name: "FK_cart_user_customer_id",
                         column: x => x.customer_id,
+                        principalTable: "user",
+                        principalColumn: "user_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "feedback",
+                columns: table => new
+                {
+                    feedback_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    product_id = table.Column<int>(type: "int", nullable: false),
+                    creator_id = table.Column<int>(type: "int", nullable: false),
+                    reply_id = table.Column<int>(type: "int", nullable: true),
+                    rate = table.Column<int>(type: "int", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    update_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    is_deleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_feedback", x => x.feedback_id);
+                    table.ForeignKey(
+                        name: "FK_feedback_feedback_reply_id",
+                        column: x => x.reply_id,
+                        principalTable: "feedback",
+                        principalColumn: "feedback_id");
+                    table.ForeignKey(
+                        name: "FK_feedback_product_product_id",
+                        column: x => x.product_id,
+                        principalTable: "product",
+                        principalColumn: "product_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_feedback_user_creator_id",
+                        column: x => x.creator_id,
                         principalTable: "user",
                         principalColumn: "user_id",
                         onDelete: ReferentialAction.Cascade);
@@ -201,37 +234,6 @@ namespace Phone_Shop.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "feedback",
-                columns: table => new
-                {
-                    feedback_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    order_id = table.Column<int>(type: "int", nullable: false),
-                    product_id = table.Column<int>(type: "int", nullable: false),
-                    rate = table.Column<int>(type: "int", nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    update_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    is_deleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_feedback", x => x.feedback_id);
-                    table.ForeignKey(
-                        name: "FK_feedback_order_order_id",
-                        column: x => x.order_id,
-                        principalTable: "order",
-                        principalColumn: "order_id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_feedback_product_product_id",
-                        column: x => x.product_id,
-                        principalTable: "product",
-                        principalColumn: "product_id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "order_detail",
                 columns: table => new
                 {
@@ -260,35 +262,6 @@ namespace Phone_Shop.DataAccess.Migrations
                         principalTable: "product",
                         principalColumn: "product_id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "feedback_reply",
-                columns: table => new
-                {
-                    feedback_reply_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    feedback_id = table.Column<int>(type: "int", nullable: false),
-                    content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    reply_id = table.Column<int>(type: "int", nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    update_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    is_deleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_feedback_reply", x => x.feedback_reply_id);
-                    table.ForeignKey(
-                        name: "FK_feedback_reply_feedback_feedback_id",
-                        column: x => x.feedback_id,
-                        principalTable: "feedback",
-                        principalColumn: "feedback_id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_feedback_reply_user_reply_id",
-                        column: x => x.reply_id,
-                        principalTable: "user",
-                        principalColumn: "user_id");
                 });
 
             migrationBuilder.InsertData(
@@ -348,9 +321,9 @@ namespace Phone_Shop.DataAccess.Migrations
                     { 2, "Fpt Hòa Lạc", new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3460), "ducnm8101@gmail.com", "Nguyen Minh Duc", false, "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", "5541282702", 3, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3360), "MinhDuc" },
                     { 3, null, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3462), "bkervin4@gmail.com", "Kirk Nelson", false, "70db85967ceb5ab1d79060fe0e2fc536f02ca747086564989953385fe58cab7f", "4533389559", 1, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3362), "Admin123" },
                     { 4, null, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3485), "oparagreen0@gmail.com", "Nguyen Thi Thu", false, "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", "0984739845", 3, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3385), "ThuThu" },
-                    { 5, "FSoft Academy", new DateTime(2024, 9, 13, 15, 22, 14, 339, DateTimeKind.Local).AddTicks(434), "DuocNQ1@fpt.com", "Nguyen Quoc Duoc", false, "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", null, 2, new DateTime(2024, 9, 13, 15, 22, 14, 339, DateTimeKind.Local).AddTicks(442), "DuocNQ1" },
+                    { 5, "FSoft Academy", new DateTime(2024, 9, 16, 11, 22, 54, 827, DateTimeKind.Local).AddTicks(126), "DuocNQ1@fpt.com", "Nguyen Quoc Duoc", false, "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", null, 2, new DateTime(2024, 9, 16, 11, 22, 54, 827, DateTimeKind.Local).AddTicks(138), "DuocNQ1" },
                     { 6, null, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3390), "", "Nguyen Anh Tuan", false, "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", "6298446654", 3, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3390), "AnhTuan" },
-                    { 7, "FSoft Academy", new DateTime(2024, 9, 13, 15, 22, 14, 339, DateTimeKind.Local).AddTicks(457), "LamLT1@fsoft.com", "Luu Tung Lam", false, "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", null, 2, new DateTime(2024, 9, 13, 15, 22, 14, 339, DateTimeKind.Local).AddTicks(457), "LamLT1" }
+                    { 7, "FSoft Academy", new DateTime(2024, 9, 16, 11, 22, 54, 827, DateTimeKind.Local).AddTicks(151), "LamLT1@fsoft.com", "Luu Tung Lam", false, "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", null, 2, new DateTime(2024, 9, 16, 11, 22, 54, 827, DateTimeKind.Local).AddTicks(152), "LamLT1" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -364,9 +337,9 @@ namespace Phone_Shop.DataAccess.Migrations
                 column: "product_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_feedback_order_id",
+                name: "IX_feedback_creator_id",
                 table: "feedback",
-                column: "order_id");
+                column: "creator_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_feedback_product_id",
@@ -374,13 +347,8 @@ namespace Phone_Shop.DataAccess.Migrations
                 column: "product_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_feedback_reply_feedback_id",
-                table: "feedback_reply",
-                column: "feedback_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_feedback_reply_reply_id",
-                table: "feedback_reply",
+                name: "IX_feedback_reply_id",
+                table: "feedback",
                 column: "reply_id");
 
             migrationBuilder.CreateIndex(
@@ -416,7 +384,7 @@ namespace Phone_Shop.DataAccess.Migrations
                 name: "cart");
 
             migrationBuilder.DropTable(
-                name: "feedback_reply");
+                name: "feedback");
 
             migrationBuilder.DropTable(
                 name: "order_detail");
@@ -425,16 +393,13 @@ namespace Phone_Shop.DataAccess.Migrations
                 name: "user_client");
 
             migrationBuilder.DropTable(
-                name: "feedback");
-
-            migrationBuilder.DropTable(
-                name: "client");
-
-            migrationBuilder.DropTable(
                 name: "order");
 
             migrationBuilder.DropTable(
                 name: "product");
+
+            migrationBuilder.DropTable(
+                name: "client");
 
             migrationBuilder.DropTable(
                 name: "user");

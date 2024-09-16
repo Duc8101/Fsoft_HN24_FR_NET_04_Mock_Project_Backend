@@ -12,7 +12,7 @@ using Phone_Shop.DataAccess.DBContext;
 namespace Phone_Shop.DataAccess.Migrations
 {
     [DbContext(typeof(PhoneShopContext))]
-    [Migration("20240913082214_InitialCreate")]
+    [Migration("20240916042255_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -34,21 +34,9 @@ namespace Phone_Shop.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("created_at");
-
                     b.Property<int>("CustomerId")
                         .HasColumnType("int")
                         .HasColumnName("customer_id");
-
-                    b.Property<bool>("IsCheckout")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_checkout");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_deleted");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int")
@@ -57,10 +45,6 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int")
                         .HasColumnName("quantity");
-
-                    b.Property<DateTime>("UpdateAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("update_at");
 
                     b.HasKey("CartId");
 
@@ -185,22 +169,22 @@ namespace Phone_Shop.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeedbackId"));
 
-                    b.Property<string>("Content")
+                    b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
-                        .HasColumnName("content");
+                        .HasColumnName("comment");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
+                    b.Property<int>("CreatorId")
+                        .HasColumnType("int")
+                        .HasColumnName("creator_id");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
                         .HasColumnName("is_deleted");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int")
-                        .HasColumnName("order_id");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int")
@@ -210,59 +194,23 @@ namespace Phone_Shop.DataAccess.Migrations
                         .HasColumnType("int")
                         .HasColumnName("rate");
 
+                    b.Property<int?>("ReplyId")
+                        .HasColumnType("int")
+                        .HasColumnName("reply_id");
+
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("datetime2")
                         .HasColumnName("update_at");
 
                     b.HasKey("FeedbackId");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("CreatorId");
 
                     b.HasIndex("ProductId");
 
+                    b.HasIndex("ReplyId");
+
                     b.ToTable("feedback");
-                });
-
-            modelBuilder.Entity("Phone_Shop.Common.Entity.FeedbackReply", b =>
-                {
-                    b.Property<int>("FeedbackReplyId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("feedback_reply_id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeedbackReplyId"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("content");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("created_at");
-
-                    b.Property<int>("FeedbackId")
-                        .HasColumnType("int")
-                        .HasColumnName("feedback_id");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<int>("ReplyUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdateAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("update_at");
-
-                    b.HasKey("FeedbackReplyId");
-
-                    b.HasIndex("FeedbackId");
-
-                    b.HasIndex("ReplyUserId");
-
-                    b.ToTable("feedback_reply");
                 });
 
             modelBuilder.Entity("Phone_Shop.Common.Entity.Order", b =>
@@ -816,13 +764,13 @@ namespace Phone_Shop.DataAccess.Migrations
                         {
                             UserId = 5,
                             Address = "FSoft Academy",
-                            CreatedAt = new DateTime(2024, 9, 13, 15, 22, 14, 339, DateTimeKind.Local).AddTicks(434),
+                            CreatedAt = new DateTime(2024, 9, 16, 11, 22, 54, 827, DateTimeKind.Local).AddTicks(126),
                             Email = "DuocNQ1@fpt.com",
                             FullName = "Nguyen Quoc Duoc",
                             IsDeleted = false,
                             Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
                             RoleId = 2,
-                            UpdateAt = new DateTime(2024, 9, 13, 15, 22, 14, 339, DateTimeKind.Local).AddTicks(442),
+                            UpdateAt = new DateTime(2024, 9, 16, 11, 22, 54, 827, DateTimeKind.Local).AddTicks(138),
                             Username = "DuocNQ1"
                         },
                         new
@@ -842,13 +790,13 @@ namespace Phone_Shop.DataAccess.Migrations
                         {
                             UserId = 7,
                             Address = "FSoft Academy",
-                            CreatedAt = new DateTime(2024, 9, 13, 15, 22, 14, 339, DateTimeKind.Local).AddTicks(457),
+                            CreatedAt = new DateTime(2024, 9, 16, 11, 22, 54, 827, DateTimeKind.Local).AddTicks(151),
                             Email = "LamLT1@fsoft.com",
                             FullName = "Luu Tung Lam",
                             IsDeleted = false,
                             Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
                             RoleId = 2,
-                            UpdateAt = new DateTime(2024, 9, 13, 15, 22, 14, 339, DateTimeKind.Local).AddTicks(457),
+                            UpdateAt = new DateTime(2024, 9, 16, 11, 22, 54, 827, DateTimeKind.Local).AddTicks(152),
                             Username = "LamLT1"
                         });
                 });
@@ -912,9 +860,9 @@ namespace Phone_Shop.DataAccess.Migrations
 
             modelBuilder.Entity("Phone_Shop.Common.Entity.Feedback", b =>
                 {
-                    b.HasOne("Phone_Shop.Common.Entity.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
+                    b.HasOne("Phone_Shop.Common.Entity.User", "Creator")
+                        .WithMany("Feedbacks")
+                        .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -924,26 +872,13 @@ namespace Phone_Shop.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Order");
+                    b.HasOne("Phone_Shop.Common.Entity.Feedback", "Reply")
+                        .WithMany("InversionReply")
+                        .HasForeignKey("ReplyId");
+
+                    b.Navigation("Creator");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Phone_Shop.Common.Entity.FeedbackReply", b =>
-                {
-                    b.HasOne("Phone_Shop.Common.Entity.Feedback", "Feedback")
-                        .WithMany("FeedbackReplies")
-                        .HasForeignKey("FeedbackId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Phone_Shop.Common.Entity.User", "Reply")
-                        .WithMany("FeedbackReplies")
-                        .HasForeignKey("ReplyUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Feedback");
 
                     b.Navigation("Reply");
                 });
@@ -1031,7 +966,7 @@ namespace Phone_Shop.DataAccess.Migrations
 
             modelBuilder.Entity("Phone_Shop.Common.Entity.Feedback", b =>
                 {
-                    b.Navigation("FeedbackReplies");
+                    b.Navigation("InversionReply");
                 });
 
             modelBuilder.Entity("Phone_Shop.Common.Entity.Order", b =>
@@ -1057,7 +992,7 @@ namespace Phone_Shop.DataAccess.Migrations
                 {
                     b.Navigation("Carts");
 
-                    b.Navigation("FeedbackReplies");
+                    b.Navigation("Feedbacks");
 
                     b.Navigation("Orders");
 

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Phone_Shop.Common.Entity
 {
     [Table("cart")]
-    public partial class Cart : CommonEntity
+    public partial class Cart
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -19,8 +19,6 @@ namespace Phone_Shop.Common.Entity
 
         [Column("quantity")]
         public int Quantity { get; set; }
-        [Column("is_checkout")]
-        public bool IsCheckout { get; set; }
 
         public virtual Product Product { get; set; } = null!;
         public virtual User Customer { get; set; } = null!;
