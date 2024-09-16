@@ -24,7 +24,7 @@ namespace Phone_Shop.Services.Orders
             try
             {
                 Func<IQueryable<Cart>, IQueryable<Cart>> include = item => item.Include(c => c.Product).Include(c => c.Customer);
-                Expression<Func<Cart, bool>> predicateCart = c => c.CustomerId == userId && c.IsCheckout == false && c.IsDeleted == false;
+                Expression<Func<Cart, bool>> predicateCart = c => c.CustomerId == userId;
                 IQueryable<Cart> queryCart = _unitOfWork.CartRepository.GetAll(include, null, predicateCart);
                 List<Cart> carts = queryCart.ToList();
 
@@ -91,13 +91,7 @@ namespace Phone_Shop.Services.Orders
                 });
 
                 _unitOfWork.OrderDetailRepository.AddMultiple(orderDetails);
-
-                carts.ForEach(cart =>
-                {
-                    cart.IsCheckout = true;
-                });
-
-                _unitOfWork.CartRepository.UpdateMultiple(carts);
+                _unitOfWork.CartRepository.DeleteMultiple(carts);
                 _unitOfWork.Commit();
                 return new ResponseBase(data, "Check out successful");
             }

@@ -27,7 +27,7 @@ namespace Phone_Shop.Services.Carts
                     return new ResponseBase($"Not found product with id = {DTO.ProductId}", (int)HttpStatusCode.NotFound);
                 }
 
-                Expression<Func<Cart, bool>> predicate = c => c.CustomerId == userId && c.ProductId == DTO.ProductId && c.IsCheckout == false && c.IsDeleted == false;
+                Expression<Func<Cart, bool>> predicate = c => c.CustomerId == userId && c.ProductId == DTO.ProductId;
                 Cart? cart = _unitOfWork.CartRepository.GetFirst(null, predicate);
 
                 _unitOfWork.BeginTransaction();
@@ -38,17 +38,12 @@ namespace Phone_Shop.Services.Carts
                         CustomerId = userId,
                         ProductId = DTO.ProductId,
                         Quantity = 1,
-                        IsCheckout = false,
-                        CreatedAt = DateTime.Now,
-                        UpdateAt = DateTime.Now,
-                        IsDeleted = false,
                     };
                     _unitOfWork.CartRepository.Add(cart);
                 }
                 else
                 {
                     cart.Quantity++;
-                    cart.UpdateAt = DateTime.Now;
                     _unitOfWork.CartRepository.Update(cart);
                 }
 
@@ -72,25 +67,24 @@ namespace Phone_Shop.Services.Carts
                     return new ResponseBase($"Not found product with id = {productId}", (int)HttpStatusCode.NotFound);
                 }
 
-                Expression<Func<Cart, bool>> predicate = c => c.CustomerId == userId && c.ProductId == productId && c.IsCheckout == false && c.IsDeleted == false;
+                Expression<Func<Cart, bool>> predicate = c => c.CustomerId == userId && c.ProductId == productId;
                 Cart? cart = _unitOfWork.CartRepository.GetFirst(null, predicate);
                 if (cart == null)
                 {
                     return new ResponseBase("Not found cart", (int)HttpStatusCode.NotFound);
                 }
 
+                _unitOfWork.BeginTransaction();
                 if (cart.Quantity == 1)
                 {
-                    cart.IsDeleted = true;
+                    _unitOfWork.CartRepository.Delete(cart);
                 }
                 else
                 {
                     cart.Quantity--;
-                    cart.UpdateAt = DateTime.Now;
+                    _unitOfWork.CartRepository.Update(cart);
                 }
 
-                _unitOfWork.BeginTransaction();
-                _unitOfWork.CartRepository.Update(cart);
                 _unitOfWork.Commit();
                 return new ResponseBase(true);
             }
@@ -106,8 +100,7 @@ namespace Phone_Shop.Services.Carts
             try
             {
                 Func<IQueryable<Cart>, IQueryable<Cart>> include = item => item.Include(c => c.Product);
-                Expression<Func<Cart, bool>> predicate = c => c.CustomerId == userId && c.IsCheckout == false && c.IsDeleted == false;
-                IQueryable<Cart> query = _unitOfWork.CartRepository.GetAll(include, null, predicate);
+                IQueryable<Cart> query = _unitOfWork.CartRepository.GetAll(include, null, c => c.CustomerId == userId);
                 List<Cart> carts = query.ToList();
                 List<CartDetailDTO> cartDetailDTOs = _mapper.Map<List<CartDetailDTO>>(carts);
                 CartListDTO data = new CartListDTO()

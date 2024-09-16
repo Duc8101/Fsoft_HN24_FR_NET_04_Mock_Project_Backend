@@ -9,7 +9,7 @@ namespace Phone_Shop.Common.Entity
     {
         public Feedback()
         {
-            FeedbackReplies = new HashSet<FeedbackReply>();
+            InversionReply = new HashSet<Feedback>();
         }
 
         [Key]
@@ -17,24 +17,30 @@ namespace Phone_Shop.Common.Entity
         [Column("feedback_id")]
         public int FeedbackId { get; set; }
 
-        [Column("content")]
+        [Column("comment")]
         [Required]
-        public string Content { get; set; } = null!;
-
-        [Column("order_id")]
-        public int OrderId { get; set; }
+        public string Comment { get; set; } = null!;
 
         [Column("product_id")]
         public int ProductId { get; set; }
+
+        [Column("creator_id")]
+        public int CreatorId { get; set; }
+
+        [Column("reply_id")]
+        public int? ReplyId { get; set; }
 
         [Column("rate")]
         [Range((int) FeedBackRate.Min, (int)FeedBackRate.Max)]
         public int Rate { get; set; }
 
-        public virtual Order Order { get; set; } = null!;
-
         public virtual Product Product { get; set; } = null!;
 
-        public virtual ICollection<FeedbackReply> FeedbackReplies { get; set; }
+        public virtual User Creator { get; set; } = null!;
+
+        public virtual Feedback? Reply { get; set; }
+
+        public virtual ICollection<Feedback> InversionReply { get; set; }
+
     }
 }
