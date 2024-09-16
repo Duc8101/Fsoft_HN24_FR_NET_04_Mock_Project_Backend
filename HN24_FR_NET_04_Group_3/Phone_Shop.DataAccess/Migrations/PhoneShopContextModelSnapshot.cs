@@ -183,9 +183,9 @@ namespace Phone_Shop.DataAccess.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("is_deleted");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int>("OrderDetailId")
                         .HasColumnType("int")
-                        .HasColumnName("product_id");
+                        .HasColumnName("order_detail_id");
 
                     b.Property<int>("Rate")
                         .HasColumnType("int")
@@ -203,7 +203,7 @@ namespace Phone_Shop.DataAccess.Migrations
 
                     b.HasIndex("CreatorId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("OrderDetailId");
 
                     b.HasIndex("ReplyId");
 
@@ -259,13 +259,12 @@ namespace Phone_Shop.DataAccess.Migrations
 
             modelBuilder.Entity("Phone_Shop.Common.Entity.OrderDetail", b =>
                 {
-                    b.Property<int>("OrderId")
+                    b.Property<int>("OrderDetailId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("order_id");
+                        .HasColumnName("order_detail_id");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("product_id");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailId"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2")
@@ -280,9 +279,17 @@ namespace Phone_Shop.DataAccess.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("is_deleted");
 
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int")
+                        .HasColumnName("order_id");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("price");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("product_id");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
@@ -297,7 +304,9 @@ namespace Phone_Shop.DataAccess.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("update_at");
 
-                    b.HasKey("OrderId", "ProductId");
+                    b.HasKey("OrderDetailId");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
 
@@ -320,6 +329,10 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2")
                         .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("description");
 
                     b.Property<string>("Image")
                         .IsRequired()
@@ -761,13 +774,13 @@ namespace Phone_Shop.DataAccess.Migrations
                         {
                             UserId = 5,
                             Address = "FSoft Academy",
-                            CreatedAt = new DateTime(2024, 9, 16, 11, 22, 54, 827, DateTimeKind.Local).AddTicks(126),
+                            CreatedAt = new DateTime(2024, 9, 16, 15, 27, 21, 649, DateTimeKind.Local).AddTicks(7810),
                             Email = "DuocNQ1@fpt.com",
                             FullName = "Nguyen Quoc Duoc",
                             IsDeleted = false,
                             Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
                             RoleId = 2,
-                            UpdateAt = new DateTime(2024, 9, 16, 11, 22, 54, 827, DateTimeKind.Local).AddTicks(138),
+                            UpdateAt = new DateTime(2024, 9, 16, 15, 27, 21, 649, DateTimeKind.Local).AddTicks(7819),
                             Username = "DuocNQ1"
                         },
                         new
@@ -787,13 +800,13 @@ namespace Phone_Shop.DataAccess.Migrations
                         {
                             UserId = 7,
                             Address = "FSoft Academy",
-                            CreatedAt = new DateTime(2024, 9, 16, 11, 22, 54, 827, DateTimeKind.Local).AddTicks(151),
+                            CreatedAt = new DateTime(2024, 9, 16, 15, 27, 21, 649, DateTimeKind.Local).AddTicks(7833),
                             Email = "LamLT1@fsoft.com",
                             FullName = "Luu Tung Lam",
                             IsDeleted = false,
                             Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
                             RoleId = 2,
-                            UpdateAt = new DateTime(2024, 9, 16, 11, 22, 54, 827, DateTimeKind.Local).AddTicks(152),
+                            UpdateAt = new DateTime(2024, 9, 16, 15, 27, 21, 649, DateTimeKind.Local).AddTicks(7834),
                             Username = "LamLT1"
                         });
                 });
@@ -863,9 +876,9 @@ namespace Phone_Shop.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Phone_Shop.Common.Entity.Product", "Product")
+                    b.HasOne("Phone_Shop.Common.Entity.OrderDetail", "OrderDetail")
                         .WithMany("Feedbacks")
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("OrderDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -875,7 +888,7 @@ namespace Phone_Shop.DataAccess.Migrations
 
                     b.Navigation("Creator");
 
-                    b.Navigation("Product");
+                    b.Navigation("OrderDetail");
 
                     b.Navigation("Reply");
                 });
@@ -971,11 +984,14 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.Navigation("OrderDetails");
                 });
 
+            modelBuilder.Entity("Phone_Shop.Common.Entity.OrderDetail", b =>
+                {
+                    b.Navigation("Feedbacks");
+                });
+
             modelBuilder.Entity("Phone_Shop.Common.Entity.Product", b =>
                 {
                     b.Navigation("Carts");
-
-                    b.Navigation("Feedbacks");
 
                     b.Navigation("OrderDetails");
                 });

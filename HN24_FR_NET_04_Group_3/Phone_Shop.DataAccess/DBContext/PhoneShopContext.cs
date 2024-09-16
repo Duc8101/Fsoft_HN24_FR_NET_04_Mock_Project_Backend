@@ -2,6 +2,7 @@
 using Phone_Shop.Common.Configuration;
 using Phone_Shop.Common.Entity;
 using System.Globalization;
+using System.Reflection.PortableExecutable;
 
 namespace Phone_Shop.DataAccess.DBContext
 {
@@ -25,7 +26,6 @@ namespace Phone_Shop.DataAccess.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<OrderDetail>().HasKey(od => new { od.OrderId, od.ProductId });
             modelBuilder.Entity<UserClient>().HasKey(uc => new { uc.ClientId, uc.UserId });
 
             // --------------------------- seed data -----------------------------------
