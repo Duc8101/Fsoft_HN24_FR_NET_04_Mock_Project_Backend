@@ -10,7 +10,7 @@ using System.Net;
 
 namespace Phone_Shop.API.Controllers
 {
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     [ApiController]
     [Authorize]
     public class OrderController : BaseAPIController
@@ -23,7 +23,7 @@ namespace Phone_Shop.API.Controllers
             _service = service;
         }
 
-        [HttpPost("[action]")]
+        [HttpPost]
         [Role(Roles.Customer)]
         public async Task<ResponseBase> Create([Required] OrderCreateDTO DTO)
         {
@@ -39,6 +39,61 @@ namespace Phone_Shop.API.Controllers
             }
 
             return await _service.Create(DTO, userId);
+        }
+
+        [HttpGet]
+        [Role(Roles.Customer, Roles.Admin)]
+        public ResponseBase List(string? status, [Required] int pageSize = 10, [Required] int currentPage = 1)
+        {
+
+            if (isAdmin())
+            {
+                return _service.List(status, pageSize, currentPage, null);
+            }
+
+            string? UserId = getUserId();
+            if (UserId == null)
+            {
+                return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);
+            }
+
+            if (!int.TryParse(UserId, out int userId))
+            {
+                return new ResponseBase($"User id login {UserId} not valid", (int)HttpStatusCode.Conflict);
+            }
+
+            return _service.List(status, pageSize, currentPage, userId);
+        }
+
+        [HttpGet("{orderId}")]
+        [Role(Roles.Customer, Roles.Admin)]
+        public ResponseBase Detail([Required] int orderId)
+        {
+
+            if (isAdmin())
+            {
+                return _service.Detail(orderId, null);
+            }
+
+            string? UserId = getUserId();
+            if (UserId == null)
+            {
+                return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);
+            }
+
+            if (!int.TryParse(UserId, out int userId))
+            {
+                return new ResponseBase($"User id login {UserId} not valid", (int)HttpStatusCode.Conflict);
+            }
+
+            return _service.Detail(orderId, userId);
+        }
+
+        [HttpPut("{orderId}")]
+        [Role(Roles.Admin)]
+        public async Task<ResponseBase> Update([Required] int orderId, [Required] OrderUpdateDTO DTO)
+        {
+            return await _service.Update(orderId, DTO);
         }
     }
 }
