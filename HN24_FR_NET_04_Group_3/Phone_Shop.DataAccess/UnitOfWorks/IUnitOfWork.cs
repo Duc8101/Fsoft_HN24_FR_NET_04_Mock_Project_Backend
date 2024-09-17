@@ -1,4 +1,4 @@
-﻿using Phone_Shop.Common.Entity;
+using Phone_Shop.Common.Entity;
 using Phone_Shop.DataAccess.Repositories.Common;
 
 namespace Phone_Shop.DataAccess.UnitOfWorks
@@ -12,7 +12,8 @@ namespace Phone_Shop.DataAccess.UnitOfWorks
         IRepository<Product> ProductRepository { get; }
         IRepository<Order> OrderRepository { get; }
         IRepository<OrderDetail> OrderDetailRepository { get; }
-
+        IRepository<Category> CategoryRepository { get; }
+        
         void Commit();
         void BeginTransaction();
         void RollBack();

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Phone_Shop.Common.Entity
@@ -34,6 +34,9 @@ namespace Phone_Shop.Common.Entity
 
         [Column("quantity")]
         public int Quantity { get; set; }
+
+        [Column("description")]
+        public string? Description { get; set; }
 
         public virtual Category Category { get; set; } = null!;
         public virtual ICollection<Cart> Carts { get; set; }
