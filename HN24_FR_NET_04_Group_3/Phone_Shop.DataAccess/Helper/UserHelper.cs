@@ -31,7 +31,7 @@ namespace Phone_Shop.DataAccess.Helper
             byte[] key = Encoding.UTF8.GetBytes(ConfigData.JwtKey);
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(key);
             SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            
+
             //  create list claim  to store user's information
             List<Claim> claims = new List<Claim>()
             {
@@ -94,6 +94,16 @@ namespace Phone_Shop.DataAccess.Helper
             string body = "<h1>New Order</h1>\n"
                 + "<p>Please check information order</p>\n";
             return body;
+        }
+
+        public static string BodyEmailForApproveOrder(List<OrderDetail> list)
+        {
+            StringBuilder builder = new StringBuilder("<p>Information order detail:</p>\n");
+            foreach (OrderDetail item in list)
+            {
+                builder.AppendLine($"<p> - {item.ProductName} , quantity: {item.Quantity}</p>");
+            }
+            return builder.ToString();
         }
 
     }
