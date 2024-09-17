@@ -37,6 +37,9 @@ namespace Phone_Shop.Common.Entity
         [Column("description")]
         public string? Description { get; set; }
 
+        [Column("is_deleted")]
+        public bool IsDeleted { get; set; }
+
         public virtual Category Category { get; set; } = null!;
         public virtual ICollection<Cart> Carts { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }

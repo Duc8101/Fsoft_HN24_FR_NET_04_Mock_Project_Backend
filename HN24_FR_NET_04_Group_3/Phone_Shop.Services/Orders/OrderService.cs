@@ -11,7 +11,6 @@ using Phone_Shop.DataAccess.Extensions;
 using Phone_Shop.DataAccess.Helper;
 using Phone_Shop.DataAccess.UnitOfWorks;
 using Phone_Shop.Services.Base;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Net;
 
@@ -80,7 +79,6 @@ namespace Phone_Shop.Services.Orders
                 order.Status = OrderStatus.Pending.ToString();
                 order.CreatedAt = DateTime.Now;
                 order.UpdateAt = DateTime.Now;
-                order.IsDeleted = false;
                 order.Note = null;
                 order.CustomerId = userId;
                 _unitOfWork.OrderRepository.Add(order);
@@ -91,7 +89,6 @@ namespace Phone_Shop.Services.Orders
                     detail.OrderId = order.OrderId;
                     detail.CreatedAt = DateTime.Now;
                     detail.UpdateAt = DateTime.Now;
-                    detail.IsDeleted = false;
                 });
 
                 _unitOfWork.OrderDetailRepository.AddMultiple(orderDetails);
@@ -187,8 +184,8 @@ namespace Phone_Shop.Services.Orders
                     return new ResponseBase("Not found order", (int)HttpStatusCode.NotFound);
                 }
 
-                if(DTO.Status.ToLower().Trim() != OrderStatus.Approved.ToString().ToLower().Trim()
-                    || DTO.Status.ToLower().Trim() != OrderStatus.Rejected.ToString().ToLower().Trim() 
+                if (DTO.Status.ToLower().Trim() != OrderStatus.Approved.ToString().ToLower().Trim()
+                    || DTO.Status.ToLower().Trim() != OrderStatus.Rejected.ToString().ToLower().Trim()
                     || DTO.Status.ToLower().Trim() != OrderStatus.Done.ToString().ToLower().Trim()
                     || DTO.Status.ToLower().Trim() != OrderStatus.Ship_Fail.getDescription().ToLower().Trim())
                 {
@@ -199,10 +196,10 @@ namespace Phone_Shop.Services.Orders
                 List<OrderDetailListDTO> data = _mapper.Map<List<OrderDetailListDTO>>(orderDetails);
 
                 //-----------------------  if status update is approved ------------------------------
-                if(DTO.Status.ToLower().Trim() == OrderStatus.Approved.ToString().ToLower().Trim())
+                if (DTO.Status.ToLower().Trim() == OrderStatus.Approved.ToString().ToLower().Trim())
                 {
                     // if order status is approved
-                    if(order.Status == OrderStatus.Approved.ToString().ToLower().Trim())
+                    if (order.Status == OrderStatus.Approved.ToString().ToLower().Trim())
                     {
                         order.UpdateAt = DateTime.Now;
                         order.Note = StringHelper.getStringValue(DTO.Note);
@@ -249,7 +246,7 @@ namespace Phone_Shop.Services.Orders
                         return new ResponseBase(data, "Update successful");
                     }
 
-                    return new ResponseBase(data, $"You can only change status to '{OrderStatus.Approved}' for orders status '{OrderStatus.Pending}'", (int) HttpStatusCode.Conflict);
+                    return new ResponseBase(data, $"You can only change status to '{OrderStatus.Approved}' for orders status '{OrderStatus.Pending}'", (int)HttpStatusCode.Conflict);
                 }
 
                 //-----------------------  if status update is rejected ------------------------------
@@ -261,7 +258,7 @@ namespace Phone_Shop.Services.Orders
                         // if not note
                         if (StringHelper.isStringNullOrEmpty(DTO.Note))
                         {
-                            return new ResponseBase(data, $"You have to note when order '{OrderStatus.Rejected}'", (int) HttpStatusCode.Conflict);
+                            return new ResponseBase(data, $"You have to note when order '{OrderStatus.Rejected}'", (int)HttpStatusCode.Conflict);
                         }
 
                         order.Status = OrderStatus.Rejected.ToString();
@@ -274,7 +271,7 @@ namespace Phone_Shop.Services.Orders
                         return new ResponseBase(data, "Update successful");
                     }
 
-                    return new ResponseBase(data, $"You can only change order status to '{OrderStatus.Rejected}' for orders '{OrderStatus.Pending}'" 
+                    return new ResponseBase(data, $"You can only change order status to '{OrderStatus.Rejected}' for orders '{OrderStatus.Pending}'"
                         + $"When order status is '{OrderStatus.Rejected}', you can't update anymore", (int)HttpStatusCode.Conflict);
                 }
 

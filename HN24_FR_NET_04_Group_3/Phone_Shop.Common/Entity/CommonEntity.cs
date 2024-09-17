@@ -8,7 +8,5 @@ namespace Phone_Shop.Common.Entity
         public DateTime CreatedAt { get; set; }
         [Column("update_at")]
         public DateTime UpdateAt { get; set; }
-        [Column("is_deleted")]
-        public bool IsDeleted { get; set; }
     }
 }

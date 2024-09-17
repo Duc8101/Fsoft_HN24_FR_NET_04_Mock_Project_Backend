@@ -22,6 +22,9 @@ namespace Phone_Shop.Common.Entity
         [MaxLength((int)CategoryMaxLength.Category_Name)]
         public string CategoryName { get; set; } = null!;
 
+        [Column("is_deleted")]
+        public bool IsDeleted { get; set; }
+
         public virtual ICollection<Product> Products { get; set; }
     }
 }
