@@ -10,7 +10,6 @@ namespace Phone_Shop.Common.Entity
         {
             Carts = new HashSet<Cart>();
             OrderDetails = new HashSet<OrderDetail>();
-            Feedbacks = new HashSet<Feedback>();
         }
 
         [Key]
@@ -41,6 +40,5 @@ namespace Phone_Shop.Common.Entity
         public virtual Category Category { get; set; } = null!;
         public virtual ICollection<Cart> Carts { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
-        public virtual ICollection<Feedback> Feedbacks { get; set; }
     }
 }

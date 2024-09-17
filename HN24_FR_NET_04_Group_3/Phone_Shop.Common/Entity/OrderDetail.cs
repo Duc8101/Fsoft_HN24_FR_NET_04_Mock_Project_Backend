@@ -8,8 +8,13 @@ namespace Phone_Shop.Common.Entity
     {
         public OrderDetail() 
         {
-            
+            Feedbacks = new HashSet<Feedback>();
         }
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("order_detail_id")]
+        public int OrderDetailId { get; set; }
 
         [Column("order_id")]
         public int OrderId { get; set; }
@@ -33,5 +38,7 @@ namespace Phone_Shop.Common.Entity
 
         public virtual Order Order { get; set; } = null!;
         public virtual Product Product { get; set; } = null!;
+
+        public virtual ICollection<Feedback> Feedbacks { get; set;}
     }
 }

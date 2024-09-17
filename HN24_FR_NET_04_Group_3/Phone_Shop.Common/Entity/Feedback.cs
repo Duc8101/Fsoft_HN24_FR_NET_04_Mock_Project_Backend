@@ -21,8 +21,8 @@ namespace Phone_Shop.Common.Entity
         [Required]
         public string Comment { get; set; } = null!;
 
-        [Column("product_id")]
-        public int ProductId { get; set; }
+        [Column("order_detail_id")]
+        public int OrderDetailId { get; set; }
 
         [Column("creator_id")]
         public int CreatorId { get; set; }
@@ -34,10 +34,8 @@ namespace Phone_Shop.Common.Entity
         [Range((int) FeedBackRate.Min, (int)FeedBackRate.Max)]
         public int Rate { get; set; }
 
-        public virtual Product Product { get; set; } = null!;
-
+        public virtual OrderDetail OrderDetail { get; set; } = null!;
         public virtual User Creator { get; set; } = null!;
-
         public virtual Feedback? Reply { get; set; }
 
         public virtual ICollection<Feedback> InversionReply { get; set; }
