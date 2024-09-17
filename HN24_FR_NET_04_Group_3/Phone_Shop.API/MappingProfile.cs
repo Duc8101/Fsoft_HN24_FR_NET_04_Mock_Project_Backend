@@ -1,5 +1,6 @@
 using AutoMapper;
 using Phone_Shop.Common.DTOs.CartDTO;
+using Phone_Shop.Common.DTOs.CategoryDTO;
 using Phone_Shop.Common.DTOs.OrderDTO;
 using Phone_Shop.Common.DTOs.ProductDTO;
 using Phone_Shop.Common.DTOs.UserDTO;
@@ -39,6 +40,9 @@ namespace Phone_Shop.API
           .ForMember(des => des.Description, map => map.MapFrom(src => StringHelper.getStringValue(src.Description)));
       CreateMap<Product, ProductListDTO>()
          .ForMember(des => des.CategoryName, map => map.MapFrom(src => src.Category.CategoryName));
+      CreateMap<CategoryCreateUpdateDTO, Category>()
+        .ForMember(des => des.CategoryName, map => map.MapFrom(src => src.CategoryName.Trim()));
+      CreateMap<Category, CategoryListDTO>();
     }
   }
 }
