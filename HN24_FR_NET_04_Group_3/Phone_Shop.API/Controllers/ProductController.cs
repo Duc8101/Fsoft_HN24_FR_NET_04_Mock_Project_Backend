@@ -22,12 +22,34 @@ namespace Phone_Shop.API.Controllers
       _service = service;
     }
 
+    [HttpGet("get-all-products")]
+    public ResponseBase GetAll(string? name, int? categoryId, [Required] int pageSize = 10, [Required] int currentPage = 1)
+    {
+      return _service.GetAll(name, categoryId, pageSize, currentPage);
+    }
+
     [HttpPost("[action]")]
     [Authorize]
     [Role(Roles.Admin)]
-    public async Task<ResponseBase> Create([Required] ProductCreateUpdateDTO DTO)
+    public ResponseBase Create([Required] ProductCreateUpdateDTO DTO)
     {
-      return await _service.Create(DTO);
+      return _service.Create(DTO);
+    }
+
+    [HttpPut("[action]/{productId}")]
+    [Authorize]
+    [Role(Roles.Admin)]
+    public ResponseBase Update([Required] int productId, [Required] ProductCreateUpdateDTO DTO)
+    {
+      return _service.Update(productId, DTO);
+    }
+
+    [HttpDelete("[action]/{productId}")]
+    [Authorize]
+    [Role(Roles.Admin)]
+    public ResponseBase Delete([Required] int productId)
+    {
+      return _service.Delete(productId);
     }
   }
 }

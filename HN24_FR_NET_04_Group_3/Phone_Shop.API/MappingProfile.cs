@@ -37,6 +37,8 @@ namespace Phone_Shop.API
           .ForMember(des => des.ProductName, map => map.MapFrom(src => src.ProductName.Trim()))
           .ForMember(des => des.Image, map => map.MapFrom(src => src.Image.Trim()))
           .ForMember(des => des.Description, map => map.MapFrom(src => StringHelper.getStringValue(src.Description)));
+      CreateMap<Product, ProductListDTO>()
+         .ForMember(des => des.CategoryName, map => map.MapFrom(src => src.Category.CategoryName));
     }
   }
 }

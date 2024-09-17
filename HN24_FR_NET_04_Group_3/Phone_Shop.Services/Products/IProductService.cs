@@ -5,9 +5,9 @@ namespace Phone_Shop.Services.Products
 {
   public interface IProductService
   {
-    Task<ResponseBase> Create(ProductCreateUpdateDTO DTO);
-    Task<ResponseBase> Update(ProductCreateUpdateDTO DTO);
-    Task<ResponseBase> Delete(int id);
-    Task<ResponseBase> GetAll();
+    ResponseBase Create(ProductCreateUpdateDTO DTO);
+    ResponseBase Update(int productId, ProductCreateUpdateDTO DTO);
+    ResponseBase Delete(int productId);
+    ResponseBase GetAll(string? name, int? categoryId, int pageSize, int currentPage);
   }
 }
