@@ -197,7 +197,6 @@ namespace Phone_Shop.Services.Users
                         HardwareInfo = hardwareInfo,
                         CreatedAt = DateTime.Now,
                         UpdateAt = DateTime.Now,
-                        IsDeleted = false,
                     };
                     _unitOfWork.ClientRepository.Add(client);
                     clientId = client.ClientId;
@@ -226,7 +225,6 @@ namespace Phone_Shop.Services.Users
                         ExpireDate = expireDate,
                         CreatedAt = dateNow,
                         UpdateAt = dateNow,
-                        IsDeleted = false,
                     };
                     _unitOfWork.UserClientRepository.Add(userClient);
                 }
@@ -310,7 +308,6 @@ namespace Phone_Shop.Services.Users
                 user.RoleId = (int)Roles.Customer;
                 user.CreatedAt = DateTime.Now;
                 user.UpdateAt = DateTime.Now;
-                user.IsDeleted = false;
                 _unitOfWork.BeginTransaction();
                 _unitOfWork.UserRepository.Add(user);
                 _unitOfWork.Commit();
