@@ -12,7 +12,7 @@ using Phone_Shop.DataAccess.DBContext;
 namespace Phone_Shop.DataAccess.Migrations
 {
     [DbContext(typeof(PhoneShopContext))]
-    [Migration("20240916082721_InitialCreate")]
+    [Migration("20240917163321_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -147,10 +147,6 @@ namespace Phone_Shop.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("hardware_info");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_deleted");
-
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("datetime2")
                         .HasColumnName("update_at");
@@ -181,10 +177,6 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.Property<int>("CreatorId")
                         .HasColumnType("int")
                         .HasColumnName("creator_id");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_deleted");
 
                     b.Property<int>("OrderDetailId")
                         .HasColumnType("int")
@@ -235,10 +227,6 @@ namespace Phone_Shop.DataAccess.Migrations
                         .HasColumnType("int")
                         .HasColumnName("customer_id");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_deleted");
-
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("note");
@@ -277,10 +265,6 @@ namespace Phone_Shop.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("image");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_deleted");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int")
@@ -613,10 +597,6 @@ namespace Phone_Shop.DataAccess.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_deleted");
-
                     b.Property<string>("RoleName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -636,7 +616,6 @@ namespace Phone_Shop.DataAccess.Migrations
                         {
                             RoleId = 1,
                             CreatedAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3385),
-                            IsDeleted = false,
                             RoleName = "Admin",
                             UpdateAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3385)
                         },
@@ -644,7 +623,6 @@ namespace Phone_Shop.DataAccess.Migrations
                         {
                             RoleId = 2,
                             CreatedAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3387),
-                            IsDeleted = false,
                             RoleName = "Staff",
                             UpdateAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3387)
                         },
@@ -652,7 +630,6 @@ namespace Phone_Shop.DataAccess.Migrations
                         {
                             RoleId = 3,
                             CreatedAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3389),
-                            IsDeleted = false,
                             RoleName = "Customer",
                             UpdateAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3389)
                         });
@@ -684,10 +661,6 @@ namespace Phone_Shop.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("full_name");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -726,7 +699,6 @@ namespace Phone_Shop.DataAccess.Migrations
                             CreatedAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3457),
                             Email = "fellcock2@gmail.com",
                             FullName = "Chu Quang Quan",
-                            IsDeleted = false,
                             Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
                             Phone = "8851738015",
                             RoleId = 3,
@@ -740,7 +712,6 @@ namespace Phone_Shop.DataAccess.Migrations
                             CreatedAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3460),
                             Email = "ducnm8101@gmail.com",
                             FullName = "Nguyen Minh Duc",
-                            IsDeleted = false,
                             Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
                             Phone = "5541282702",
                             RoleId = 3,
@@ -753,7 +724,6 @@ namespace Phone_Shop.DataAccess.Migrations
                             CreatedAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3462),
                             Email = "bkervin4@gmail.com",
                             FullName = "Kirk Nelson",
-                            IsDeleted = false,
                             Password = "70db85967ceb5ab1d79060fe0e2fc536f02ca747086564989953385fe58cab7f",
                             Phone = "4533389559",
                             RoleId = 1,
@@ -766,7 +736,6 @@ namespace Phone_Shop.DataAccess.Migrations
                             CreatedAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3485),
                             Email = "oparagreen0@gmail.com",
                             FullName = "Nguyen Thi Thu",
-                            IsDeleted = false,
                             Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
                             Phone = "0984739845",
                             RoleId = 3,
@@ -777,13 +746,12 @@ namespace Phone_Shop.DataAccess.Migrations
                         {
                             UserId = 5,
                             Address = "FSoft Academy",
-                            CreatedAt = new DateTime(2024, 9, 16, 15, 27, 21, 649, DateTimeKind.Local).AddTicks(7810),
+                            CreatedAt = new DateTime(2024, 9, 17, 23, 33, 21, 112, DateTimeKind.Local).AddTicks(5789),
                             Email = "DuocNQ1@fpt.com",
                             FullName = "Nguyen Quoc Duoc",
-                            IsDeleted = false,
                             Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
                             RoleId = 2,
-                            UpdateAt = new DateTime(2024, 9, 16, 15, 27, 21, 649, DateTimeKind.Local).AddTicks(7819),
+                            UpdateAt = new DateTime(2024, 9, 17, 23, 33, 21, 112, DateTimeKind.Local).AddTicks(5800),
                             Username = "DuocNQ1"
                         },
                         new
@@ -792,7 +760,6 @@ namespace Phone_Shop.DataAccess.Migrations
                             CreatedAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3390),
                             Email = "",
                             FullName = "Nguyen Anh Tuan",
-                            IsDeleted = false,
                             Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
                             Phone = "6298446654",
                             RoleId = 3,
@@ -803,13 +770,12 @@ namespace Phone_Shop.DataAccess.Migrations
                         {
                             UserId = 7,
                             Address = "FSoft Academy",
-                            CreatedAt = new DateTime(2024, 9, 16, 15, 27, 21, 649, DateTimeKind.Local).AddTicks(7833),
+                            CreatedAt = new DateTime(2024, 9, 17, 23, 33, 21, 112, DateTimeKind.Local).AddTicks(5815),
                             Email = "LamLT1@fsoft.com",
                             FullName = "Luu Tung Lam",
-                            IsDeleted = false,
                             Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
                             RoleId = 2,
-                            UpdateAt = new DateTime(2024, 9, 16, 15, 27, 21, 649, DateTimeKind.Local).AddTicks(7834),
+                            UpdateAt = new DateTime(2024, 9, 17, 23, 33, 21, 112, DateTimeKind.Local).AddTicks(5816),
                             Username = "LamLT1"
                         });
                 });
@@ -831,10 +797,6 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.Property<DateTime>("ExpireDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("expire_date");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Token")
                         .IsRequired()
