@@ -51,5 +51,11 @@ namespace Phone_Shop.API.Controllers
         {
             return _service.Delete(productId);
         }
+
+        [HttpGet("get-top-products")]
+        public ResponseBase GetTop(string? name, int? categoryId, [Required] int pageSize = 10, [Required] int currentPage = 1)
+        {
+            return _service.GetTop(name, categoryId, pageSize, currentPage);
+        }
     }
 }
