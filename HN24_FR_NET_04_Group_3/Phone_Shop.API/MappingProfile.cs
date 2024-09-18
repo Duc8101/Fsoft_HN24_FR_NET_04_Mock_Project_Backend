@@ -1,5 +1,6 @@
 using AutoMapper;
 using Phone_Shop.Common.DTOs.CartDTO;
+using Phone_Shop.Common.DTOs.FeedbackDTO;
 using Phone_Shop.Common.DTOs.OrderDetailDTO;
 using Phone_Shop.Common.DTOs.OrderDTO;
 using Phone_Shop.Common.DTOs.ProductDTO;
@@ -48,6 +49,12 @@ namespace Phone_Shop.API
                 .ForMember(des => des.OrderDate, map => map.MapFrom(src => src.CreatedAt.ToString("yyyy-MM-dd h:mm:ss tt")));
 
             CreateMap<OrderDetail, OrderDetailListDTO>();
+
+            CreateMap<FeedbackCreateDTO, Feedback>()
+                .ForMember(des => des.Comment, map => map.MapFrom(src => src.Comment.Trim()));
+
+            CreateMap<FeedbackReplyDTO, Feedback>()
+                .ForMember(des => des.Comment, map => map.MapFrom(src => src.Comment.Trim()));
         }
     }
 }

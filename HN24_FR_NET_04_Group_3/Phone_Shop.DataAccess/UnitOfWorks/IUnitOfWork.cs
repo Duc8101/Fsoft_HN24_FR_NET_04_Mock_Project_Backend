@@ -13,6 +13,7 @@ namespace Phone_Shop.DataAccess.UnitOfWorks
         IRepository<Order> OrderRepository { get; }
         IRepository<OrderDetail> OrderDetailRepository { get; }
         IRepository<Category> CategoryRepository { get; }
+        IRepository<Feedback> FeedbackRepository { get; }
 
         void Commit();
         void BeginTransaction();

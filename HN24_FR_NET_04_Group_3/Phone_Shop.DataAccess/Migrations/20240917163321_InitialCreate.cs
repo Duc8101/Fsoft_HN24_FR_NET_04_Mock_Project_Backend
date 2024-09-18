@@ -234,7 +234,7 @@ namespace Phone_Shop.DataAccess.Migrations
                     order_detail_id = table.Column<int>(type: "int", nullable: false),
                     creator_id = table.Column<int>(type: "int", nullable: false),
                     reply_id = table.Column<int>(type: "int", nullable: true),
-                    rate = table.Column<int>(type: "int", nullable: false),
+                    rate = table.Column<int>(type: "int", nullable: true),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     update_at = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
