@@ -1,9 +1,15 @@
-﻿namespace Phone_Shop.Common.Enums
+﻿using System.ComponentModel;
+
+namespace Phone_Shop.Common.Enums
 {
     public enum OrderStatus
     {
         Pending,
         Rejected,
-        Approved
+        Approved,
+        Done,
+
+        [Description("Ship Failed")]
+        Ship_Fail
     }
 }
