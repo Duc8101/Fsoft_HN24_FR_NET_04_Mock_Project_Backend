@@ -7,5 +7,7 @@ namespace Phone_Shop.Common.DTOs.ProductDTO
 
         public string CategoryName { get; set; } = null!;
 
+        public double Rate { get; set; }
+
     }
 }

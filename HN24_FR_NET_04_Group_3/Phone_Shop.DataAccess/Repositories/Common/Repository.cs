@@ -133,5 +133,18 @@ namespace Phone_Shop.DataAccess.Repositories.Common
             _context.Set<TEntity>().RemoveRange(entities);
             _context.SaveChanges();
         }
+
+        public int Count(params Expression<Func<TEntity, bool>>[] predicates)
+        {
+            IQueryable<TEntity> query = GetQuery(null, predicates);
+            return query.Count();
+        }
+
+        public async Task<int> CountAsync(params Expression<Func<TEntity, bool>>[] predicates)
+        {
+            IQueryable<TEntity> query = GetQuery(null, predicates);
+            return await query.CountAsync();
+        }
+
     }
 }

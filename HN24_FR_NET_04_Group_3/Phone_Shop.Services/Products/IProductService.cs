@@ -10,5 +10,6 @@ namespace Phone_Shop.Services.Products
         ResponseBase Delete(int productId);
         ResponseBase GetAll(string? name, int? categoryId, int pageSize, int currentPage);
         ResponseBase GetTop(string? name, int? categoryId, int pageSize, int currentPage);
+        ResponseBase Detail(int productId);
     }
 }

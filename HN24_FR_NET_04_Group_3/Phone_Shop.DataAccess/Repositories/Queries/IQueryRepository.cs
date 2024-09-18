@@ -12,6 +12,8 @@ namespace Phone_Shop.DataAccess.Repositories.Queries
 
         TEntity? FindById(object id);
 
+        int Count(params Expression<Func<TEntity, bool>>[] predicates);
+
         bool Any(Expression<Func<TEntity, bool>> predicate);
 
         Task<TEntity?> GetSingleAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates);
@@ -21,5 +23,8 @@ namespace Phone_Shop.DataAccess.Repositories.Queries
         Task<TEntity?> FindByIdAsync(object id);
 
         Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate);
+
+        Task<int> CountAsync(params Expression<Func<TEntity, bool>>[] predicates);
+
     }
 }

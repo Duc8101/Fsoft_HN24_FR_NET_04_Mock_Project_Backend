@@ -29,7 +29,12 @@ namespace Phone_Shop.Services.Feedbacks
 
                 if (detail.Order.CustomerId != creatorId)
                 {
-                    return new ResponseBase($"Order detail with id = {DTO.OrderDetailId} doesn't belong to you", (int)HttpStatusCode.Conflict);
+                    return new ResponseBase($"This order doesn't belong to you", (int)HttpStatusCode.Conflict);
+                }
+
+                if(detail.Order.Status != OrderStatus.Done.ToString())
+                {
+                    return new ResponseBase($"You can only create feedback when your order status is '${OrderStatus.Done}'", (int)HttpStatusCode.Conflict);
                 }
 
                 if (StringHelper.isStringNullOrEmpty(DTO.Comment))
@@ -77,21 +82,14 @@ namespace Phone_Shop.Services.Feedbacks
 
                 Feedback feedbackCreate = _mapper.Map<Feedback>(DTO);
                 feedbackCreate.CreatorId = creatorId;
-                feedbackCreate.ReplyId = null;
+                feedbackCreate.ReplyId = DTO.RepliedFeedbackId;
                 feedbackCreate.CreatedAt = DateTime.Now;
                 feedbackCreate.UpdateAt = DateTime.Now;
                 feedbackCreate.OrderDetailId = repliedFeedback.OrderDetailId;
                 feedbackCreate.Rate = null;
 
                 _unitOfWork.BeginTransaction();
-                // create feedbackCreate
                 _unitOfWork.FeedbackRepository.Add(feedbackCreate);
-
-                // update feedbackReplied
-                repliedFeedback.ReplyId = feedbackCreate.FeedbackId;
-                repliedFeedback.UpdateAt = DateTime.Now;
-                _unitOfWork.FeedbackRepository.Update(repliedFeedback);
-
                 _unitOfWork.Commit();
                 return new ResponseBase(true, "Reply feedback successful");
             }
