@@ -178,7 +178,7 @@ namespace Phone_Shop.Services.Users
         {
             try
             {
-                User? user = _unitOfWork.UserRepository.GetFirst(item => item.Include(u => u.Role), u => u.Username == DTO.Username);
+                User? user = _unitOfWork.UserRepository.GetFirst(item => item.Include(u => u.Role).Include(u => u.Carts), u => u.Username == DTO.Username);
                 if (user == null || !user.Password.Equals(UserHelper.HashPassword(DTO.Password)))
                 {
                     return new ResponseBase("Username or password incorrect", (int)HttpStatusCode.Conflict);
@@ -243,6 +243,10 @@ namespace Phone_Shop.Services.Users
                         accessToken = UserHelper.getAccessToken(user, userClient.ExpireDate);
                     }
                 }
+
+                // delete cart
+                List<Cart> carts = user.Carts.ToList();
+                _unitOfWork.CartRepository.DeleteMultiple(carts);
 
                 UserLoginInfoDTO data = _mapper.Map<UserLoginInfoDTO>(user);
                 data.Token = accessToken;

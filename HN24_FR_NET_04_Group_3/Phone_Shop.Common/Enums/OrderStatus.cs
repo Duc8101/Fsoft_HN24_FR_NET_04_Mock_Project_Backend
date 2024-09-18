@@ -12,4 +12,5 @@ namespace Phone_Shop.Common.Enums
         [Description("Ship Failed")]
         Ship_Fail
     }
+
 }

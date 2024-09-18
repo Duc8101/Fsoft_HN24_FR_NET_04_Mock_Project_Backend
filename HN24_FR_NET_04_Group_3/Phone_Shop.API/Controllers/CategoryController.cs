@@ -9,45 +9,52 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Phone_Shop.API.Controllers
 {
-  [Route("api/[controller]")]
-  [ApiController]
-  public class CategoryController : ControllerBase
-  {
-    private readonly ICategoryService _service;
-
-    public CategoryController(ICategoryService service)
+    [Route("[controller]")]
+    [ApiController]
+    public class CategoryController : ControllerBase
     {
-      _service = service;
-    }
+        
+        private readonly ICategoryService _service;
 
-    [HttpGet("get-all-categorys")]
-    public ResponseBase GetAll(string? name, [Required] int pageSize = 10, [Required] int currentPage = 1)
-    {
-      return _service.GetCategoriesPagination(name, pageSize, currentPage);
-    }
+        public CategoryController(ICategoryService service)
+        {
+            _service = service;
+        }
 
-    [HttpPost("[action]")]
-    [Authorize]
-    [Role(Roles.Admin)]
-    public ResponseBase Create([Required] CategoryCreateUpdateDTO DTO)
-    {
-      return _service.Create(DTO);
-    }
+        [HttpGet("get-categories-pagination")]
+        public ResponseBase GetPagination(string? name, [Required] int pageSize = 10, [Required] int currentPage = 1)
+        {
+            return _service.GetPagination(name, pageSize, currentPage);
+        }
 
-    [HttpPut("[action]/{CategoryId}")]
-    [Authorize]
-    [Role(Roles.Admin)]
-    public ResponseBase Update([Required] int CategoryId, [Required] CategoryCreateUpdateDTO DTO)
-    {
-      return _service.Update(CategoryId, DTO);
-    }
+        [HttpPost("[action]")]
+        [Authorize]
+        [Role(Roles.Admin)]
+        public ResponseBase Create([Required] CategoryCreateUpdateDTO DTO)
+        {
+            return _service.Create(DTO);
+        }
 
-    [HttpDelete("[action]/{CategoryId}")]
-    [Authorize]
-    [Role(Roles.Admin)]
-    public ResponseBase Delete([Required] int CategoryId)
-    {
-      return _service.Delete(CategoryId);
+        [HttpPut("[action]/{categoryId}")]
+        [Authorize]
+        [Role(Roles.Admin)]
+        public ResponseBase Update([Required] int categoryId, [Required] CategoryCreateUpdateDTO DTO)
+        {
+            return _service.Update(categoryId, DTO);
+        }
+
+        [HttpDelete("[action]/{categoryId}")]
+        [Authorize]
+        [Role(Roles.Admin)]
+        public ResponseBase Delete([Required] int categoryId)
+        {
+            return _service.Delete(categoryId);
+        }
+
+        [HttpGet("get-all-categories")]
+        public ResponseBase GetAll()
+        {
+            return _service.GetAll();
+        }
     }
-  }
 }

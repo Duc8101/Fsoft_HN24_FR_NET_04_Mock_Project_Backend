@@ -2,7 +2,7 @@
 {
     public class OrderUpdateDTO
     {
-        public string Status { get; set; } = null!;
+        public int Status { get; set; }
         public string? Note { get; set; }
     }
 }

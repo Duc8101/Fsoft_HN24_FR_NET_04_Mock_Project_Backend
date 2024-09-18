@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Phone_Shop.Common.DTOs.ProductDTO;
 using Phone_Shop.Common.Entity;
+using Phone_Shop.Common.Enums;
 using Phone_Shop.Common.Paging;
 using Phone_Shop.Common.Responses;
 using Phone_Shop.DataAccess.Helper;
@@ -100,7 +101,6 @@ namespace Phone_Shop.Services.Products
         {
             try
             {
-
                 Func<IQueryable<Product>, IQueryable<Product>> include = item => item.Include(p => p.Category);
                 Func<IQueryable<Product>, IQueryable<Product>> sort = item => item.OrderByDescending(p => p.UpdateAt);
                 List<Expression<Func<Product, bool>>> predicates = new List<Expression<Func<Product, bool>>>();
@@ -116,7 +116,47 @@ namespace Phone_Shop.Services.Products
                 }
 
                 IQueryable<Product> query = _unitOfWork.ProductRepository.GetAll(include, sort, predicates.ToArray());
-                List<Product> products = query.ToList();
+                List<Product> products = query.Skip(pageSize * (currentPage - 1)).Take(pageSize).ToList();
+                List<ProductListDTO> list = _mapper.Map<List<ProductListDTO>>(products);
+
+                Pagination<ProductListDTO> data = new Pagination<ProductListDTO>
+                {
+                    PageSize = pageSize,
+                    CurrentPage = currentPage,
+                    List = list,
+                    TotalElement = query.Count()
+                };
+                return new ResponseBase(data);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
+            }
+        }
+
+        public ResponseBase GetTop(string? name, int? categoryId, int pageSize, int currentPage)
+        {
+            try
+            {
+                Func<IQueryable<Product>, IQueryable<Product>> include = item => item.Include(p => p.Category);
+                List<Expression<Func<Product, bool>>> predicates = new List<Expression<Func<Product, bool>>>();
+
+                if (name != null && name.Trim().Length > 0)
+                {
+                    predicates.Add(p => p.ProductName == name.Trim());
+                }
+
+                if (categoryId.HasValue)
+                {
+                    predicates.Add(p => p.CategoryId == categoryId);
+                }
+
+                Func<IQueryable<Product>, IQueryable<Product>> sort = item => item.OrderByDescending(p => p.OrderDetails
+                .Where(od => od.Order.Status == OrderStatus.Done.ToString()).Sum(od => od.Quantity))
+                .ThenByDescending(p => p.UpdateAt);
+                
+                IQueryable<Product> query = _unitOfWork.ProductRepository.GetAll(include, sort, predicates.ToArray());
+                List<Product> products = query.Skip(pageSize * (currentPage - 1)).Take(pageSize).ToList();
                 List<ProductListDTO> list = _mapper.Map<List<ProductListDTO>>(products);
 
                 Pagination<ProductListDTO> data = new Pagination<ProductListDTO>
@@ -194,5 +234,6 @@ namespace Phone_Shop.Services.Products
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }
+
     }
 }

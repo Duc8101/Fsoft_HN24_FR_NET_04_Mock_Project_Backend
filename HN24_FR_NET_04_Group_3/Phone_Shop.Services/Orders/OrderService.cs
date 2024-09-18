@@ -22,6 +22,7 @@ namespace Phone_Shop.Services.Orders
         {
         }
 
+
         public async Task<ResponseBase> Create(OrderCreateDTO DTO, int userId)
         {
             try
@@ -119,7 +120,7 @@ namespace Phone_Shop.Services.Orders
                     predicate = o => o.OrderId == orderId;
                 }
 
-                Order? order = _unitOfWork.OrderRepository.GetSingle(null, predicate);
+                Order? order = _unitOfWork.OrderRepository.GetSingle(item => item.Include(o => o.OrderDetails), predicate);
                 if (order == null)
                 {
                     return new ResponseBase("Not found order", (int)HttpStatusCode.NotFound);
@@ -184,163 +185,179 @@ namespace Phone_Shop.Services.Orders
                     return new ResponseBase("Not found order", (int)HttpStatusCode.NotFound);
                 }
 
-                if (DTO.Status.ToLower().Trim() != OrderStatus.Approved.ToString().ToLower().Trim()
-                    || DTO.Status.ToLower().Trim() != OrderStatus.Rejected.ToString().ToLower().Trim()
-                    || DTO.Status.ToLower().Trim() != OrderStatus.Done.ToString().ToLower().Trim()
-                    || DTO.Status.ToLower().Trim() != OrderStatus.Ship_Fail.getDescription().ToLower().Trim())
-                {
-                    return new ResponseBase("Order status invalid", (int)HttpStatusCode.Conflict);
-                }
-
                 List<OrderDetail> orderDetails = order.OrderDetails.ToList();
                 List<OrderDetailListDTO> data = _mapper.Map<List<OrderDetailListDTO>>(orderDetails);
 
-                //-----------------------  if status update is approved ------------------------------
-                if (DTO.Status.ToLower().Trim() == OrderStatus.Approved.ToString().ToLower().Trim())
+                switch (DTO.Status)
                 {
-                    // if order status is approved
-                    if (order.Status == OrderStatus.Approved.ToString().ToLower().Trim())
-                    {
-                        order.UpdateAt = DateTime.Now;
-                        order.Note = StringHelper.getStringValue(DTO.Note);
-
-                        _unitOfWork.BeginTransaction();
-                        _unitOfWork.OrderRepository.Update(order);
-                        _unitOfWork.Commit();
-                        return new ResponseBase(data, "Update successful");
-                    }
-
-                    // if order status is pending
-                    if (order.Status == OrderStatus.Pending.ToString().ToLower().Trim())
-                    {
-                        order.Status = OrderStatus.Approved.ToString();
-                        order.UpdateAt = DateTime.Now;
-                        order.Note = StringHelper.getStringValue(DTO.Note);
-
-                        _unitOfWork.BeginTransaction();
-
-                        foreach (OrderDetail detail in orderDetails)
+                    // ----------------------------- if status update is approved ----------------------
+                    case (int)OrderStatus.Approved:
+                        // if order status is already approved
+                        if (order.Status == OrderStatus.Approved.ToString())
                         {
-                            Product? product = _unitOfWork.ProductRepository.GetSingle(null, p => p.ProductId == detail.ProductId && p.IsDeleted == false);
-                            if (product == null)
-                            {
-                                _unitOfWork.RollBack();
-                                return new ResponseBase(data, $"Product '{detail.ProductName}' not exist!!!", (int)HttpStatusCode.NotFound);
-                            }
-
-                            if (product.Quantity < detail.Quantity)
-                            {
-                                _unitOfWork.RollBack();
-                                return new ResponseBase(data, $"Product '{detail.ProductName}' doesn't have enough quantity!!!", (int)HttpStatusCode.Conflict);
-                            }
-
-                            product.Quantity = product.Quantity - detail.Quantity;
-                            product.UpdateAt = DateTime.Now;
-                            _unitOfWork.ProductRepository.Update(product);
+                            return StatusUpdateApprovedAndOrderStatusApproved(order, DTO, data);
                         }
 
-                        string body = UserHelper.BodyEmailForApproveOrder(orderDetails);
-                        await UserHelper.sendEmail("[PHONE SHOPPING] Notification for approve order", body, order.Customer.Email);
-                        _unitOfWork.OrderRepository.Update(order);
-                        _unitOfWork.Commit();
-                        return new ResponseBase(data, "Update successful");
-                    }
-
-                    return new ResponseBase(data, $"You can only change status to '{OrderStatus.Approved}' for orders status '{OrderStatus.Pending}'", (int)HttpStatusCode.Conflict);
-                }
-
-                //-----------------------  if status update is rejected ------------------------------
-                if (DTO.Status.ToLower().Trim() == OrderStatus.Rejected.ToString().ToLower().Trim())
-                {
-                    // if order status is pending
-                    if (order.Status == OrderStatus.Pending.ToString().ToLower().Trim())
-                    {
-                        // if not note
-                        if (StringHelper.isStringNullOrEmpty(DTO.Note))
+                        // if order status is pending
+                        if (order.Status == OrderStatus.Pending.ToString())
                         {
-                            return new ResponseBase(data, $"You have to note when order '{OrderStatus.Rejected}'", (int)HttpStatusCode.Conflict);
+                            return await StatusUpdateApprovedAndOrderStatusPending(order, DTO, data, orderDetails);
                         }
 
-                        order.Status = OrderStatus.Rejected.ToString();
-                        order.UpdateAt = DateTime.Now;
-                        order.Note = StringHelper.getStringValue(DTO.Note);
+                        return new ResponseBase(data, $"You can only change status to '{OrderStatus.Approved}' for orders status '{OrderStatus.Pending}'", (int)HttpStatusCode.Conflict);
 
-                        _unitOfWork.BeginTransaction();
-                        _unitOfWork.OrderRepository.Update(order);
-                        _unitOfWork.Commit();
-                        return new ResponseBase(data, "Update successful");
-                    }
-
-                    return new ResponseBase(data, $"You can only change order status to '{OrderStatus.Rejected}' for orders '{OrderStatus.Pending}'"
-                        + $"When order status is '{OrderStatus.Rejected}', you can't update anymore", (int)HttpStatusCode.Conflict);
-                }
-
-                //-----------------------  if status update is done ------------------------------
-                if (DTO.Status.ToLower().Trim() == OrderStatus.Done.ToString().ToLower().Trim())
-                {
-
-                    // if order status is approved
-                    if (order.Status == OrderStatus.Approved.ToString().ToLower().Trim())
-                    {
-                        order.Status = OrderStatus.Done.ToString();
-                        order.UpdateAt = DateTime.Now;
-                        order.Note = StringHelper.getStringValue(DTO.Note);
-
-                        _unitOfWork.BeginTransaction();
-                        _unitOfWork.OrderRepository.Update(order);
-                        _unitOfWork.Commit();
-                        return new ResponseBase(data, "Update successful");
-                    }
-
-                    return new ResponseBase(data, $"You can only change order status to '{OrderStatus.Done}' for orders '{OrderStatus.Approved}' " +
-                        $"And when changing to '{OrderStatus.Done}', you can't update anymore", (int)HttpStatusCode.Conflict);
-                }
-
-                //-----------------------  if status update is ship fail ------------------------------
-                // if order status is approved
-                if (order.Status == OrderStatus.Approved.ToString().ToLower().Trim())
-                {
-
-                    // if not note
-                    if (StringHelper.isStringNullOrEmpty(DTO.Note))
-                    {
-                        return new ResponseBase(data, $"You have to note when order '{OrderStatus.Ship_Fail.getDescription()}'", (int)HttpStatusCode.Conflict);
-                    }
-
-                    _unitOfWork.BeginTransaction();
-
-                    foreach (OrderDetail detail in orderDetails)
-                    {
-                        Product? product = _unitOfWork.ProductRepository.GetSingle(null, p => p.ProductId == detail.ProductId && p.IsDeleted == false);
-                        if (product == null)
+                    // ----------------------------- if status update is rejected ----------------------
+                    case (int)OrderStatus.Rejected:
+                        // if order status is pending
+                        if (order.Status == OrderStatus.Pending.ToString())
                         {
-                            _unitOfWork.RollBack();
-                            return new ResponseBase(data, $"Product '{detail.ProductName}' not exist!!!", (int)HttpStatusCode.NotFound);
+                            return StatusUpdateRejectedAndOrderStatusPending(order, DTO, data);
                         }
 
-                        product.Quantity = product.Quantity + detail.Quantity;
-                        product.UpdateAt = DateTime.Now;
-                        _unitOfWork.ProductRepository.Update(product);
-                    }
+                        return new ResponseBase(data, $"You can only change order status to '{OrderStatus.Rejected}' for orders '{OrderStatus.Pending}'"
+                       + $"When order status is '{OrderStatus.Rejected}', you can't update anymore", (int)HttpStatusCode.Conflict);
 
-                    order.Status = OrderStatus.Ship_Fail.getDescription();
-                    order.UpdateAt = DateTime.Now;
-                    order.Note = StringHelper.getStringValue(DTO.Note);
+                    //-----------------------------  if status update is done ---------------------------
+                    case (int)OrderStatus.Done:
+                        // if order status is approved
+                        if (order.Status == OrderStatus.Approved.ToString())
+                        {
+                            return StatusUpdateDoneAndOrderStatusApproved(order, DTO, data);
+                        }
+                        return new ResponseBase(data, $"You can only change order status to '{OrderStatus.Done}' for orders '{OrderStatus.Approved}' " +
+                            $"And when changing to '{OrderStatus.Done}', you can't update anymore", (int)HttpStatusCode.Conflict);
 
-                    _unitOfWork.BeginTransaction();
-                    _unitOfWork.OrderRepository.Update(order);
-                    _unitOfWork.Commit();
+                    //-----------------------------  if status update is ship failed --------------------
+                    case (int)OrderStatus.Ship_Fail:
+                        // if order status is approved
+                        if (order.Status == OrderStatus.Approved.ToString())
+                        {
+                            return StatusUpdateShipFailAndOrderStatusApproved(order, DTO, data, orderDetails);
+                        }
+
+                        return new ResponseBase(data, $"You can only change order status to '{OrderStatus.Ship_Fail.getDescription()}' for orders '{OrderStatus.Approved}' " + 
+                            $"And when changing to '{OrderStatus.Ship_Fail.getDescription()}', you can't update anymore", (int)HttpStatusCode.Conflict);
+
+                    default:
+                        return new ResponseBase("Order status invalid", (int)HttpStatusCode.Conflict);
                 }
-
-                return new ResponseBase(data, $"You can only change order status to '{OrderStatus.Ship_Fail.getDescription()}' for orders '{OrderStatus.Approved}' " +
-                    $"And when changing to '{OrderStatus.Ship_Fail.getDescription()}', you can't update anymore", (int)HttpStatusCode.Conflict);
-
             }
             catch (Exception ex)
             {
                 _unitOfWork.RollBack();
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
+        }
+
+        private ResponseBase StatusUpdateApprovedAndOrderStatusApproved(Order order, OrderUpdateDTO DTO, List<OrderDetailListDTO> data)
+        {
+            // if order status is already approved
+            order.UpdateAt = DateTime.Now;
+            order.Note = StringHelper.getStringValue(DTO.Note);
+
+            _unitOfWork.BeginTransaction();
+            _unitOfWork.OrderRepository.Update(order);
+            _unitOfWork.Commit();
+            return new ResponseBase(data, "Update successful");
+        }
+
+        private async Task<ResponseBase> StatusUpdateApprovedAndOrderStatusPending(Order order, OrderUpdateDTO DTO, List<OrderDetailListDTO> data, List<OrderDetail> orderDetails)
+        {
+            order.Status = OrderStatus.Approved.ToString();
+            order.UpdateAt = DateTime.Now;
+            order.Note = StringHelper.getStringValue(DTO.Note);
+
+            _unitOfWork.BeginTransaction();
+
+            foreach (OrderDetail detail in orderDetails)
+            {
+                Product? product = _unitOfWork.ProductRepository.GetSingle(null, p => p.ProductId == detail.ProductId && p.IsDeleted == false);
+                if (product == null)
+                {
+                    _unitOfWork.RollBack();
+                    return new ResponseBase(data, $"Product '{detail.ProductName}' not exist!!!", (int)HttpStatusCode.NotFound);
+                }
+
+                if (product.Quantity < detail.Quantity)
+                {
+                    _unitOfWork.RollBack();
+                    return new ResponseBase(data, $"Product '{detail.ProductName}' doesn't have enough quantity!!!", (int)HttpStatusCode.Conflict);
+                }
+
+                product.Quantity = product.Quantity - detail.Quantity;
+                product.UpdateAt = DateTime.Now;
+                _unitOfWork.ProductRepository.Update(product);
+            }
+
+            string body = UserHelper.BodyEmailForApproveOrder(orderDetails);
+            await UserHelper.sendEmail("[PHONE SHOPPING] Notification for approve order", body, order.Customer.Email);
+            _unitOfWork.OrderRepository.Update(order);
+            _unitOfWork.Commit();
+            return new ResponseBase(data, "Update successful");
+        }
+
+        private ResponseBase StatusUpdateRejectedAndOrderStatusPending(Order order, OrderUpdateDTO DTO, List<OrderDetailListDTO> data)
+        {
+            // if not note
+            if (StringHelper.isStringNullOrEmpty(DTO.Note))
+            {
+                return new ResponseBase(data, $"You have to note when order '{OrderStatus.Rejected}'", (int)HttpStatusCode.Conflict);
+            }
+
+            order.Status = OrderStatus.Rejected.ToString();
+            order.UpdateAt = DateTime.Now;
+            order.Note = StringHelper.getStringValue(DTO.Note);
+
+            _unitOfWork.BeginTransaction();
+            _unitOfWork.OrderRepository.Update(order);
+            _unitOfWork.Commit();
+            return new ResponseBase(data, "Update successful");
+        }
+
+        private ResponseBase StatusUpdateDoneAndOrderStatusApproved(Order order, OrderUpdateDTO DTO, List<OrderDetailListDTO> data)
+        {
+            order.Status = OrderStatus.Done.ToString();
+            order.UpdateAt = DateTime.Now;
+            order.Note = StringHelper.getStringValue(DTO.Note);
+
+            _unitOfWork.BeginTransaction();
+            _unitOfWork.OrderRepository.Update(order);
+            _unitOfWork.Commit();
+            return new ResponseBase(data, "Update successful");
+
+        }
+
+        private ResponseBase StatusUpdateShipFailAndOrderStatusApproved(Order order, OrderUpdateDTO DTO, List<OrderDetailListDTO> data, List<OrderDetail> orderDetails)
+        {
+            // if not note
+            if (StringHelper.isStringNullOrEmpty(DTO.Note))
+            {
+                return new ResponseBase(data, $"You have to note when order '{OrderStatus.Ship_Fail.getDescription()}'", (int)HttpStatusCode.Conflict);
+            }
+
+            _unitOfWork.BeginTransaction();
+
+            foreach (OrderDetail detail in orderDetails)
+            {
+                Product? product = _unitOfWork.ProductRepository.GetSingle(null, p => p.ProductId == detail.ProductId && p.IsDeleted == false);
+                if (product == null)
+                {
+                    _unitOfWork.RollBack();
+                    return new ResponseBase(data, $"Product '{detail.ProductName}' not exist!!!", (int)HttpStatusCode.NotFound);
+                }
+
+                product.Quantity = product.Quantity + detail.Quantity;
+                product.UpdateAt = DateTime.Now;
+                _unitOfWork.ProductRepository.Update(product);
+            }
+
+            order.Status = OrderStatus.Ship_Fail.getDescription();
+            order.UpdateAt = DateTime.Now;
+            order.Note = StringHelper.getStringValue(DTO.Note);
+
+            _unitOfWork.OrderRepository.Update(order);
+            _unitOfWork.Commit();
+            return new ResponseBase(data, "Update successful");
         }
     }
 }
