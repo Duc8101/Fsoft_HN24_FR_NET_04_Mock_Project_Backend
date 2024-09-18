@@ -265,10 +265,31 @@ namespace Phone_Shop.Services.Users
         {
             try
             {
-                List<Cart> carts = _unitOfWork.CartRepository.GetAll(null ,null , c => c.CustomerId == userId).ToList();
-                
+                string hardwareInfo = HardwareHelper.Generate();
+                Client? client = _unitOfWork.ClientRepository.GetFirst(null, c => c.HardwareInfo == hardwareInfo);
+
+                if (client == null)
+                {
+                    return new ResponseBase("Not found client", (int)HttpStatusCode.NotFound);
+                }
+
+                Expression<Func<UserClient, bool>> predicate = uc => uc.UserId == userId && uc.ClientId == client.ClientId;
+                UserClient? userClient = _unitOfWork.UserClientRepository.GetSingle(null, predicate);
+                if (userClient == null)
+                {
+                    return new ResponseBase("User not register on this client", (int)HttpStatusCode.Conflict);
+                }
+
+                List<Cart> carts = _unitOfWork.CartRepository.GetAll(null, null, c => c.CustomerId == userId).ToList();
+
                 _unitOfWork.BeginTransaction();
+
+                // remove cart
                 _unitOfWork.CartRepository.DeleteMultiple(carts);
+
+                // set token expire
+                userClient.ExpireDate = DateTime.Now;
+                userClient.UpdateAt = DateTime.Now;
                 _unitOfWork.Commit();
                 return new ResponseBase(true, "Logout successful");
             }
