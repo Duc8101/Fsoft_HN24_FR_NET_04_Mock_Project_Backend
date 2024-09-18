@@ -32,7 +32,7 @@ namespace Phone_Shop.Common.Entity
 
         [Column("rate")]
         [Range((int) FeedBackRate.Min, (int)FeedBackRate.Max)]
-        public int Rate { get; set; }
+        public int? Rate { get; set; }
 
         public virtual OrderDetail OrderDetail { get; set; } = null!;
         public virtual User Creator { get; set; } = null!;
