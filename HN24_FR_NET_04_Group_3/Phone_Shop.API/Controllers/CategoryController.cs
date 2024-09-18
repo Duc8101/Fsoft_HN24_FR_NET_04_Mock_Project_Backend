@@ -11,7 +11,7 @@ namespace Phone_Shop.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class CategoryController : ControllerBase
+    public class CategoryController : BaseAPIController
     {
         
         private readonly ICategoryService _service;
@@ -54,7 +54,14 @@ namespace Phone_Shop.API.Controllers
         [HttpGet("get-all-categories")]
         public ResponseBase GetAll()
         {
-            return _service.GetAll();
+            return _service.GetAll(isAdmin());
         }
+
+        [HttpGet("[action]/{categoryId}")]
+        public ResponseBase Detail([Required] int categoryId)
+        {
+            return _service.Detail(categoryId);
+        }
+
     }
 }

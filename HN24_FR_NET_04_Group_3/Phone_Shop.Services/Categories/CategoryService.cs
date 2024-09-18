@@ -6,6 +6,7 @@ using Phone_Shop.Common.Responses;
 using Phone_Shop.DataAccess.Helper;
 using Phone_Shop.DataAccess.UnitOfWorks;
 using Phone_Shop.Services.Base;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Net;
 
@@ -71,12 +72,42 @@ namespace Phone_Shop.Services.Categories
             }
         }
 
-        public ResponseBase GetAll()
+        public ResponseBase Detail(int categoryId)
         {
             try
             {
-                IQueryable<Category> query = _unitOfWork.CategoryRepository.GetAll(null, null);
-                List<Category> data = query.ToList();
+                Category? category = _unitOfWork.CategoryRepository.GetSingle(null, p => p.CategoryId == categoryId && p.IsDeleted == false);
+                if (category == null)
+                {
+                    return new ResponseBase($"Not found category with id = {categoryId}", (int)HttpStatusCode.NotFound);
+                }
+
+                CategoryListDTO data = _mapper.Map<CategoryListDTO>(category);
+                return new ResponseBase(true, "Update successful");
+            }
+            catch (Exception ex)
+            {
+                return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
+            }
+        }
+
+        public ResponseBase GetAll(bool isAdmin)
+        {
+            try
+            {
+                Func<IQueryable<Category>, IQueryable<Category>>? sort;
+                if (isAdmin)
+                {
+                    sort = item => item.OrderByDescending(c => c.UpdateAt);
+                }
+                else
+                {
+                    sort = null;
+                }
+
+                IQueryable<Category> query = _unitOfWork.CategoryRepository.GetAll(null, sort);
+                List<Category> categories = query.ToList();
+                List<CategoryListDTO> data = _mapper.Map<List<CategoryListDTO>>(categories);
                 return new ResponseBase(data);
             }
             catch (Exception ex)

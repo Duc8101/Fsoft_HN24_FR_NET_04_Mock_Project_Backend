@@ -77,7 +77,6 @@ namespace Phone_Shop.Services.Products
         {
             try
             {
-                //hhhhh
                 Product? product = _unitOfWork.ProductRepository.GetSingle(null, p => p.ProductId == productId && p.IsDeleted == false);
                 if (product == null)
                 {
@@ -93,6 +92,30 @@ namespace Phone_Shop.Services.Products
             catch (Exception ex)
             {
                 _unitOfWork.RollBack();
+                return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
+            }
+        }
+
+        public ResponseBase Detail(int productId)
+        {
+            try
+            {
+                Product? product = _unitOfWork.ProductRepository.GetSingle(item => item.Include(p => p.Category), p => p.ProductId == productId && p.IsDeleted == false);
+                if (product == null)
+                {
+                    return new ResponseBase($"Not found product with id = {productId}", (int)HttpStatusCode.NotFound);
+                }
+
+                ProductListDTO data = _mapper.Map<ProductListDTO>(product);
+
+                // --------------------- set rate for  product ----------------------
+                double? rate = _unitOfWork.FeedbackRepository.GetAll(null, null, f => f.OrderDetail.ProductId == productId).Average(f => f.Rate);
+                data.Rate = rate == null ? 0 : Math.Round(rate.Value, 2);
+
+                return new ResponseBase(data);
+            }
+            catch (Exception ex)
+            {
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }
@@ -117,7 +140,15 @@ namespace Phone_Shop.Services.Products
 
                 IQueryable<Product> query = _unitOfWork.ProductRepository.GetAll(include, sort, predicates.ToArray());
                 List<Product> products = query.Skip(pageSize * (currentPage - 1)).Take(pageSize).ToList();
+
                 List<ProductListDTO> list = _mapper.Map<List<ProductListDTO>>(products);
+
+                // --------------------- set rate for each product ----------------------
+                list.ForEach(DTO =>
+                {
+                    double? rate = _unitOfWork.FeedbackRepository.GetAll(null, null, f => f.OrderDetail.ProductId == DTO.ProductId).Average(f => f.Rate);
+                    DTO.Rate = rate == null ? 0 : Math.Round(rate.Value, 2);
+                });
 
                 Pagination<ProductListDTO> data = new Pagination<ProductListDTO>
                 {
@@ -158,6 +189,13 @@ namespace Phone_Shop.Services.Products
                 IQueryable<Product> query = _unitOfWork.ProductRepository.GetAll(include, sort, predicates.ToArray());
                 List<Product> products = query.Skip(pageSize * (currentPage - 1)).Take(pageSize).ToList();
                 List<ProductListDTO> list = _mapper.Map<List<ProductListDTO>>(products);
+
+                // --------------------- set rate for each product ----------------------
+                list.ForEach(DTO =>
+                {
+                    double? rate = _unitOfWork.FeedbackRepository.GetAll(null, null, f => f.OrderDetail.ProductId == DTO.ProductId).Average(f => f.Rate);
+                    DTO.Rate = rate == null ? 0 : Math.Round(rate.Value, 2);
+                });
 
                 Pagination<ProductListDTO> data = new Pagination<ProductListDTO>
                 {

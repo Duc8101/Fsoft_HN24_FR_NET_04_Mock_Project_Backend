@@ -57,5 +57,11 @@ namespace Phone_Shop.API.Controllers
         {
             return _service.GetTop(name, categoryId, pageSize, currentPage);
         }
+
+        [HttpGet("[action]/{productId}")]
+        public ResponseBase Detail([Required] int productId)
+        {
+            return _service.Detail(productId);
+        }
     }
 }

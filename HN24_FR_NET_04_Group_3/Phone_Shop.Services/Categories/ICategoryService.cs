@@ -9,6 +9,7 @@ namespace Phone_Shop.Services.Categories
         ResponseBase Update(int categoryId, CategoryCreateUpdateDTO DTO);
         ResponseBase Delete(int categoryId);
         ResponseBase GetPagination(string? name, int pageSize, int currentPage);
-        ResponseBase GetAll();
+        ResponseBase GetAll(bool isAdmin);
+        ResponseBase Detail(int categoryId);
     }
 }
