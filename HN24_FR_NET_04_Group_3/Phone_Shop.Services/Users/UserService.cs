@@ -261,6 +261,24 @@ namespace Phone_Shop.Services.Users
             }
         }
 
+        public ResponseBase Logout(int userId)
+        {
+            try
+            {
+                List<Cart> carts = _unitOfWork.CartRepository.GetAll(null ,null , c => c.CustomerId == userId).ToList();
+                
+                _unitOfWork.BeginTransaction();
+                _unitOfWork.CartRepository.DeleteMultiple(carts);
+                _unitOfWork.Commit();
+                return new ResponseBase(true, "Logout successful");
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.RollBack();
+                return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
+            }
+        }
+
         public ResponseBase Register(RegisterDTO DTO)
         {
             try

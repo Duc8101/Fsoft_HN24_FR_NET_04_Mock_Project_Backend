@@ -99,5 +99,23 @@ namespace Phone_Shop.API.Controllers
         {
             return _service.GetUserByToken(token);
         }
+
+        [HttpGet("[action]")]
+        [Authorize]
+        public ResponseBase Logout()
+        {
+            string? UserId = getUserId();
+            if (UserId == null)
+            {
+                return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);
+            }
+
+            if (!int.TryParse(UserId, out int userId))
+            {
+                return new ResponseBase($"User id login {UserId} not valid", (int)HttpStatusCode.Conflict);
+            }
+
+            return _service.Logout(userId);
+        }
     }
 }
