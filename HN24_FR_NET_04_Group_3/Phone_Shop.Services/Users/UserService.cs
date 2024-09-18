@@ -150,7 +150,7 @@ namespace Phone_Shop.Services.Users
                 UserClient? userClient = _unitOfWork.UserClientRepository.GetSingle(null, predicate);
                 if (userClient == null)
                 {
-                    return new ResponseBase("User not register on this client", (int)HttpStatusCode.NotFound);
+                    return new ResponseBase("User not register on this client", (int)HttpStatusCode.Conflict);
                 }
 
                 if (userClient.Token != token)
