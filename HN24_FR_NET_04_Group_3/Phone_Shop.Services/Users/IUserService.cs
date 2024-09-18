@@ -13,5 +13,6 @@ namespace Phone_Shop.Services.Users
         ResponseBase UpdateProfile(ProfileDTO DTO, int userId);
         ResponseBase ChangePassword(ChangePasswordDTO DTO, int userId);
         ResponseBase GetUserByToken(string token);
+        ResponseBase Logout(int userId);
     }
 }
