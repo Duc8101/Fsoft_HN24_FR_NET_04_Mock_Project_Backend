@@ -61,6 +61,10 @@ namespace Phone_Shop.Services.Orders
                     {
                         return new ResponseBase(data, $"Product '{item.ProductName}' not have enough quantity!!!", (int)HttpStatusCode.Conflict);
                     }
+
+                    product.Quantity = product.Quantity - item.Quantity;
+                    product.UpdateAt = DateTime.Now;
+                    _unitOfWork.ProductRepository.Update(product);
                 }
 
                 string body = UserHelper.BodyEmailForAdminReceiveOrder();
@@ -283,10 +287,6 @@ namespace Phone_Shop.Services.Orders
                     _unitOfWork.RollBack();
                     return new ResponseBase(data, $"Product '{detail.ProductName}' doesn't have enough quantity!!!", (int)HttpStatusCode.Conflict);
                 }
-
-                product.Quantity = product.Quantity - detail.Quantity;
-                product.UpdateAt = DateTime.Now;
-                _unitOfWork.ProductRepository.Update(product);
             }
 
             string body = UserHelper.BodyEmailForApproveOrder(orderDetails);
@@ -302,6 +302,20 @@ namespace Phone_Shop.Services.Orders
             if (StringHelper.isStringNullOrEmpty(DTO.Note))
             {
                 return new ResponseBase(data, $"You have to note when order '{OrderStatus.Rejected}'", (int)HttpStatusCode.Conflict);
+            }
+
+            foreach (OrderDetailListDTO detail in data)
+            {
+                Product? product = _unitOfWork.ProductRepository.GetSingle(null, p => p.ProductId == detail.ProductId && p.IsDeleted == false);
+                if (product == null)
+                {
+                    _unitOfWork.RollBack();
+                    return new ResponseBase(data, $"Product '{detail.ProductName}' not exist!!!", (int)HttpStatusCode.NotFound);
+                }
+
+                product.Quantity = product.Quantity + detail.Quantity;
+                product.UpdateAt = DateTime.Now;
+                _unitOfWork.ProductRepository.Update(product);
             }
 
             order.Status = OrderStatus.Rejected.ToString();
@@ -324,7 +338,6 @@ namespace Phone_Shop.Services.Orders
             _unitOfWork.OrderRepository.Update(order);
             _unitOfWork.Commit();
             return new ResponseBase(data, "Update successful");
-
         }
 
         private ResponseBase StatusUpdateShipFailAndOrderStatusApproved(Order order, OrderUpdateDTO DTO, List<OrderDetailListDTO> data, List<OrderDetail> orderDetails)
