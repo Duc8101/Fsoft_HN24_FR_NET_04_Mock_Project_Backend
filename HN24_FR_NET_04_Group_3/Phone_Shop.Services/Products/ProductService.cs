@@ -130,7 +130,7 @@ namespace Phone_Shop.Services.Products
 
                 if (name != null && name.Trim().Length > 0)
                 {
-                    predicates.Add(p => p.ProductName == name.Trim());
+                    predicates.Add(p => p.ProductName.ToLower().Contains(name.ToLower().Trim()));
                 }
 
                 if (categoryId.HasValue)
@@ -174,7 +174,7 @@ namespace Phone_Shop.Services.Products
 
                 if (name != null && name.Trim().Length > 0)
                 {
-                    predicates.Add(p => p.ProductName == name.Trim());
+                    predicates.Add(p => p.ProductName.ToLower().Contains(name.ToLower().Trim()));
                 }
 
                 if (categoryId.HasValue)
@@ -185,7 +185,7 @@ namespace Phone_Shop.Services.Products
                 Func<IQueryable<Product>, IQueryable<Product>> sort = item => item.OrderByDescending(p => p.OrderDetails
                 .Where(od => od.Order.Status == OrderStatus.Done.ToString()).Sum(od => od.Quantity))
                 .ThenByDescending(p => p.UpdateAt);
-                
+
                 IQueryable<Product> query = _unitOfWork.ProductRepository.GetAll(include, sort, predicates.ToArray());
                 List<Product> products = query.Skip(pageSize * (currentPage - 1)).Take(pageSize).ToList();
                 List<ProductListDTO> list = _mapper.Map<List<ProductListDTO>>(products);
