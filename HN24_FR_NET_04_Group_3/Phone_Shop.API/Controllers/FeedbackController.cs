@@ -42,7 +42,7 @@ namespace Phone_Shop.API.Controllers
         }
 
         [HttpPost("reply-feedback")]
-        [Role(Roles.Staff)]
+        [Role(Roles.Admin)]
         public ResponseBase Reply([Required] FeedbackReplyDTO DTO)
         {
             string? UserId = getUserId();

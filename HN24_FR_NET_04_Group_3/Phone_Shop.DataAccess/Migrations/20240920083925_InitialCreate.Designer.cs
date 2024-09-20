@@ -12,7 +12,7 @@ using Phone_Shop.DataAccess.DBContext;
 namespace Phone_Shop.DataAccess.Migrations
 {
     [DbContext(typeof(PhoneShopContext))]
-    [Migration("20240917163321_InitialCreate")]
+    [Migration("20240920083925_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -182,7 +182,7 @@ namespace Phone_Shop.DataAccess.Migrations
                         .HasColumnType("int")
                         .HasColumnName("order_detail_id");
 
-                    b.Property<int>("Rate")
+                    b.Property<int?>("Rate")
                         .HasColumnType("int")
                         .HasColumnName("rate");
 
@@ -622,13 +622,6 @@ namespace Phone_Shop.DataAccess.Migrations
                         new
                         {
                             RoleId = 2,
-                            CreatedAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3387),
-                            RoleName = "Staff",
-                            UpdateAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3387)
-                        },
-                        new
-                        {
-                            RoleId = 3,
                             CreatedAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3389),
                             RoleName = "Customer",
                             UpdateAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3389)
@@ -701,7 +694,7 @@ namespace Phone_Shop.DataAccess.Migrations
                             FullName = "Chu Quang Quan",
                             Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
                             Phone = "8851738015",
-                            RoleId = 3,
+                            RoleId = 2,
                             UpdateAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3357),
                             Username = "QuangQuan"
                         },
@@ -714,7 +707,7 @@ namespace Phone_Shop.DataAccess.Migrations
                             FullName = "Nguyen Minh Duc",
                             Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
                             Phone = "5541282702",
-                            RoleId = 3,
+                            RoleId = 2,
                             UpdateAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3360),
                             Username = "MinhDuc"
                         },
@@ -738,45 +731,21 @@ namespace Phone_Shop.DataAccess.Migrations
                             FullName = "Nguyen Thi Thu",
                             Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
                             Phone = "0984739845",
-                            RoleId = 3,
+                            RoleId = 2,
                             UpdateAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3385),
                             Username = "ThuThu"
                         },
                         new
                         {
                             UserId = 5,
-                            Address = "FSoft Academy",
-                            CreatedAt = new DateTime(2024, 9, 17, 23, 33, 21, 112, DateTimeKind.Local).AddTicks(5789),
-                            Email = "DuocNQ1@fpt.com",
-                            FullName = "Nguyen Quoc Duoc",
-                            Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
-                            RoleId = 2,
-                            UpdateAt = new DateTime(2024, 9, 17, 23, 33, 21, 112, DateTimeKind.Local).AddTicks(5800),
-                            Username = "DuocNQ1"
-                        },
-                        new
-                        {
-                            UserId = 6,
                             CreatedAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3390),
                             Email = "",
                             FullName = "Nguyen Anh Tuan",
                             Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
                             Phone = "6298446654",
-                            RoleId = 3,
+                            RoleId = 2,
                             UpdateAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3390),
                             Username = "AnhTuan"
-                        },
-                        new
-                        {
-                            UserId = 7,
-                            Address = "FSoft Academy",
-                            CreatedAt = new DateTime(2024, 9, 17, 23, 33, 21, 112, DateTimeKind.Local).AddTicks(5815),
-                            Email = "LamLT1@fsoft.com",
-                            FullName = "Luu Tung Lam",
-                            Password = "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5",
-                            RoleId = 2,
-                            UpdateAt = new DateTime(2024, 9, 17, 23, 33, 21, 112, DateTimeKind.Local).AddTicks(5816),
-                            Username = "LamLT1"
                         });
                 });
 
