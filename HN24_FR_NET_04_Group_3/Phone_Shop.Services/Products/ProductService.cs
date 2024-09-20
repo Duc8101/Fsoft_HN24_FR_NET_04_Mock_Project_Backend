@@ -120,7 +120,7 @@ namespace Phone_Shop.Services.Products
             }
         }
 
-        public ResponseBase GetAll(string? name, int? categoryId, int pageSize, int currentPage)
+        public ResponseBase GetAll(string? name, decimal? priceFrom, decimal? priceTo, List<int> categoryIds, int pageSize, int currentPage)
         {
             try
             {
@@ -133,9 +133,14 @@ namespace Phone_Shop.Services.Products
                     predicates.Add(p => p.ProductName.ToLower().Contains(name.ToLower().Trim()));
                 }
 
-                if (categoryId.HasValue)
+                if (categoryIds.Count > 0)
                 {
-                    predicates.Add(p => p.CategoryId == categoryId);
+                    predicates.Add(p => categoryIds.Contains(p.CategoryId));
+                }
+
+                if(priceFrom.HasValue && priceTo.HasValue)
+                {
+                    predicates.Add(p => p.Price >= priceFrom && p.Price <= priceTo);
                 }
 
                 IQueryable<Product> query = _unitOfWork.ProductRepository.GetAll(include, sort, predicates.ToArray());
@@ -165,28 +170,17 @@ namespace Phone_Shop.Services.Products
             }
         }
 
-        public ResponseBase GetTop(string? name, int? categoryId, int pageSize, int currentPage)
+        public ResponseBase GetTop(int pageSize, int currentPage)
         {
             try
             {
                 Func<IQueryable<Product>, IQueryable<Product>> include = item => item.Include(p => p.Category);
-                List<Expression<Func<Product, bool>>> predicates = new List<Expression<Func<Product, bool>>>();
-
-                if (name != null && name.Trim().Length > 0)
-                {
-                    predicates.Add(p => p.ProductName.ToLower().Contains(name.ToLower().Trim()));
-                }
-
-                if (categoryId.HasValue)
-                {
-                    predicates.Add(p => p.CategoryId == categoryId);
-                }
 
                 Func<IQueryable<Product>, IQueryable<Product>> sort = item => item.OrderByDescending(p => p.OrderDetails
                 .Where(od => od.Order.Status == OrderStatus.Done.ToString()).Sum(od => od.Quantity))
                 .ThenByDescending(p => p.UpdateAt);
 
-                IQueryable<Product> query = _unitOfWork.ProductRepository.GetAll(include, sort, predicates.ToArray());
+                IQueryable<Product> query = _unitOfWork.ProductRepository.GetAll(include, sort);
                 List<Product> products = query.Skip(pageSize * (currentPage - 1)).Take(pageSize).ToList();
                 List<ProductListDTO> list = _mapper.Map<List<ProductListDTO>>(products);
 

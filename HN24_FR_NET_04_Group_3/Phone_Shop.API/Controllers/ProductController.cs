@@ -22,10 +22,10 @@ namespace Phone_Shop.API.Controllers
             _service = service;
         }
 
-        [HttpGet("get-all-products")]
-        public ResponseBase GetAll(string? name, int? categoryId, [Required] int pageSize = 10, [Required] int currentPage = 1)
+        [HttpPost("get-all-products")]
+        public ResponseBase GetAll(string? name, decimal? priceFrom, decimal? priceTo, [Required] List<int> categoryIds, [Required] int pageSize = 10, [Required] int currentPage = 1)
         {
-            return _service.GetAll(name, categoryId, pageSize, currentPage);
+            return _service.GetAll(name, priceFrom, priceTo, categoryIds, pageSize, currentPage);
         }
 
         [HttpPost("[action]")]
@@ -53,9 +53,9 @@ namespace Phone_Shop.API.Controllers
         }
 
         [HttpGet("get-top-products")]
-        public ResponseBase GetTop(string? name, int? categoryId, [Required] int pageSize = 10, [Required] int currentPage = 1)
+        public ResponseBase GetTop([Required] int pageSize = 10, [Required] int currentPage = 1)
         {
-            return _service.GetTop(name, categoryId, pageSize, currentPage);
+            return _service.GetTop(pageSize, currentPage);
         }
 
         [HttpGet("[action]/{productId}")]

@@ -8,8 +8,8 @@ namespace Phone_Shop.Services.Products
         ResponseBase Create(ProductCreateUpdateDTO DTO);
         ResponseBase Update(int productId, ProductCreateUpdateDTO DTO);
         ResponseBase Delete(int productId);
-        ResponseBase GetAll(string? name, int? categoryId, int pageSize, int currentPage);
-        ResponseBase GetTop(string? name, int? categoryId, int pageSize, int currentPage);
+        ResponseBase GetAll(string? name, decimal? priceFrom, decimal? priceTo, List<int> categoryIds, int pageSize, int currentPage);
+        ResponseBase GetTop(int pageSize, int currentPage);
         ResponseBase Detail(int productId);
     }
 }

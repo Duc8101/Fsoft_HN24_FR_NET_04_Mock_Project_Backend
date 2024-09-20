@@ -58,6 +58,9 @@ namespace Phone_Shop.API
                 .ForMember(des => des.Comment, map => map.MapFrom(src => src.Comment.Trim()));
 
             CreateMap<Category, CategoryListDTO>();
+
+            CreateMap<CategoryCreateUpdateDTO, Category>()
+                .ForMember(des => des.CategoryName, map => map.MapFrom(src => src.CategoryName.Trim()));
         }
     }
 }
