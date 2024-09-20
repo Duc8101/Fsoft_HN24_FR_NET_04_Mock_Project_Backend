@@ -20,9 +20,9 @@ namespace Phone_Shop.DataAccess.Migrations
                     category_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     category_name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    update_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     is_deleted = table.Column<bool>(type: "bit", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    update_at = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,10 +70,10 @@ namespace Phone_Shop.DataAccess.Migrations
                     price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     category_id = table.Column<int>(type: "int", nullable: false),
                     quantity = table.Column<int>(type: "int", nullable: false),
-                    description = table.Column<string>(type: "nvarchar(max)", nullable: true),      
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    update_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     is_deleted = table.Column<bool>(type: "bit", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    update_at = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -277,8 +277,7 @@ namespace Phone_Shop.DataAccess.Migrations
                 values: new object[,]
                 {
                     { 1, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3385), "Admin", new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3385) },
-                    { 2, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3387), "Staff", new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3387) },
-                    { 3, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3389), "Customer", new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3389) }
+                    { 2, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3389), "Customer", new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3389) }
                 });
 
             migrationBuilder.InsertData(
@@ -312,13 +311,11 @@ namespace Phone_Shop.DataAccess.Migrations
                 columns: new[] { "user_id", "address", "created_at", "email", "full_name", "password", "phone", "role_id", "update_at", "username" },
                 values: new object[,]
                 {
-                    { 1, null, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3457), "fellcock2@gmail.com", "Chu Quang Quan", "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", "8851738015", 3, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3357), "QuangQuan" },
-                    { 2, "Fpt Hòa Lạc", new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3460), "ducnm8101@gmail.com", "Nguyen Minh Duc", "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", "5541282702", 3, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3360), "MinhDuc" },
+                    { 1, null, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3457), "fellcock2@gmail.com", "Chu Quang Quan", "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", "8851738015", 2, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3357), "QuangQuan" },
+                    { 2, "Fpt Hòa Lạc", new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3460), "ducnm8101@gmail.com", "Nguyen Minh Duc", "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", "5541282702", 2, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3360), "MinhDuc" },
                     { 3, null, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3462), "bkervin4@gmail.com", "Kirk Nelson", "70db85967ceb5ab1d79060fe0e2fc536f02ca747086564989953385fe58cab7f", "4533389559", 1, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3362), "Admin123" },
-                    { 4, null, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3485), "oparagreen0@gmail.com", "Nguyen Thi Thu", "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", "0984739845", 3, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3385), "ThuThu" },
-                    { 5, "FSoft Academy", new DateTime(2024, 9, 17, 23, 33, 21, 112, DateTimeKind.Local).AddTicks(5789), "DuocNQ1@fpt.com", "Nguyen Quoc Duoc", "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", null, 2, new DateTime(2024, 9, 17, 23, 33, 21, 112, DateTimeKind.Local).AddTicks(5800), "DuocNQ1" },
-                    { 6, null, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3390), "", "Nguyen Anh Tuan", "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", "6298446654", 3, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3390), "AnhTuan" },
-                    { 7, "FSoft Academy", new DateTime(2024, 9, 17, 23, 33, 21, 112, DateTimeKind.Local).AddTicks(5815), "LamLT1@fsoft.com", "Luu Tung Lam", "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", null, 2, new DateTime(2024, 9, 17, 23, 33, 21, 112, DateTimeKind.Local).AddTicks(5816), "LamLT1" }
+                    { 4, null, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3485), "oparagreen0@gmail.com", "Nguyen Thi Thu", "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", "0984739845", 2, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3385), "ThuThu" },
+                    { 5, null, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3390), "", "Nguyen Anh Tuan", "c1d0e46fdeb2b72758a6a5bd5eecf2622ff8b84a8964c8e9687c6c05c9f474b5", "6298446654", 2, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3390), "AnhTuan" }
                 });
 
             migrationBuilder.CreateIndex(
