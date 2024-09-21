@@ -128,7 +128,7 @@ namespace Phone_Shop.Services.Categories
                 }
 
                 IQueryable<Category> query = _unitOfWork.CategoryRepository.GetAll(null, sort, predicates.ToArray());
-                List<Category> categories = query.Skip(pageSize * currentPage - 1).Take(pageSize).ToList();
+                List<Category> categories = query.Skip(pageSize * (currentPage - 1)).Take(pageSize).ToList();
                 List<CategoryListDTO> list = _mapper.Map<List<CategoryListDTO>>(categories);
                 Pagination<CategoryListDTO> data = new Pagination<CategoryListDTO>
                 {
