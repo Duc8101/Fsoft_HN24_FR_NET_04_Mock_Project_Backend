@@ -126,7 +126,10 @@ namespace Phone_Shop.Services.Products
             {
                 Func<IQueryable<Product>, IQueryable<Product>> include = item => item.Include(p => p.Category);
                 Func<IQueryable<Product>, IQueryable<Product>> sort = item => item.OrderByDescending(p => p.UpdateAt);
-                List<Expression<Func<Product, bool>>> predicates = new List<Expression<Func<Product, bool>>>();
+                List<Expression<Func<Product, bool>>> predicates = new List<Expression<Func<Product, bool>>>()
+                {
+                    p => p.IsDeleted == false,
+                };
 
                 if (name != null && name.Trim().Length > 0)
                 {
@@ -180,7 +183,7 @@ namespace Phone_Shop.Services.Products
                 .Where(od => od.Order.Status == OrderStatus.Done.ToString()).Sum(od => od.Quantity))
                 .ThenByDescending(p => p.UpdateAt);
 
-                IQueryable<Product> query = _unitOfWork.ProductRepository.GetAll(include, sort);
+                IQueryable<Product> query = _unitOfWork.ProductRepository.GetAll(include, sort, p => p.IsDeleted == false);
                 List<Product> products = query.Skip(pageSize * (currentPage - 1)).Take(pageSize).ToList();
                 List<ProductListDTO> list = _mapper.Map<List<ProductListDTO>>(products);
 
