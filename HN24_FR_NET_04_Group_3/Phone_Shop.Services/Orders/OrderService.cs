@@ -281,12 +281,6 @@ namespace Phone_Shop.Services.Orders
                     _unitOfWork.RollBack();
                     return new ResponseBase(data, $"Product '{detail.ProductName}' not exist!!!", (int)HttpStatusCode.NotFound);
                 }
-
-                if (product.Quantity < detail.Quantity)
-                {
-                    _unitOfWork.RollBack();
-                    return new ResponseBase(data, $"Product '{detail.ProductName}' doesn't have enough quantity!!!", (int)HttpStatusCode.Conflict);
-                }
             }
 
             string body = UserHelper.BodyEmailForApproveOrder(orderDetails);
