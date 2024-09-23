@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Phone_Shop.Common.Entity
+namespace Phone_Shop.DataAccess.Entity
 {
     public class CommonEntity
     {

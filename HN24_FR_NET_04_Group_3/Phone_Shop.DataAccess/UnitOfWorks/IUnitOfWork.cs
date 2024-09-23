@@ -1,4 +1,4 @@
-using Phone_Shop.Common.Entity;
+using Phone_Shop.DataAccess.Entity;
 using Phone_Shop.DataAccess.Repositories.Common;
 
 namespace Phone_Shop.DataAccess.UnitOfWorks

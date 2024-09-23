@@ -6,7 +6,7 @@ using Phone_Shop.Common.DTOs.OrderDetailDTO;
 using Phone_Shop.Common.DTOs.OrderDTO;
 using Phone_Shop.Common.DTOs.ProductDTO;
 using Phone_Shop.Common.DTOs.UserDTO;
-using Phone_Shop.Common.Entity;
+using Phone_Shop.DataAccess.Entity;
 using Phone_Shop.DataAccess.Helper;
 
 namespace Phone_Shop.API

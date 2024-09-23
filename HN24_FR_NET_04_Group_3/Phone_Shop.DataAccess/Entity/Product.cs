@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Phone_Shop.Common.Entity
+namespace Phone_Shop.DataAccess.Entity
 {
     [Table("product")]
     public partial class Product : CommonEntity

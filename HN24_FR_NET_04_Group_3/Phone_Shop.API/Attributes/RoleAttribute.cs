@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Phone_Shop.Common.Entity;
 using Phone_Shop.Common.Enums;
 using Phone_Shop.Common.Responses;
+using Phone_Shop.DataAccess.Entity;
 using Phone_Shop.DataAccess.Repositories.Common;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
