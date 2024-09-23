@@ -42,7 +42,6 @@ namespace Phone_Shop.API.Controllers
         }
 
         [HttpGet]
-        [Role(Roles.Customer, Roles.Admin)]
         public ResponseBase List(string? status, [Required] int pageSize = 10, [Required] int currentPage = 1)
         {
 
@@ -66,7 +65,6 @@ namespace Phone_Shop.API.Controllers
         }
 
         [HttpGet("{orderId}")]
-        [Role(Roles.Customer, Roles.Admin)]
         public ResponseBase Detail([Required] int orderId)
         {
 

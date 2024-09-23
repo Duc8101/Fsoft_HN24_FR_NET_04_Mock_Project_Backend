@@ -21,7 +21,7 @@ namespace Phone_Shop.DataAccess.DBContext
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(ConfigData.SqlConnection);
+            optionsBuilder.UseSqlServer(AppConfig.SqlConnection);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

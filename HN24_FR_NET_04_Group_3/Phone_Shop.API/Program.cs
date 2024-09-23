@@ -60,9 +60,9 @@ namespace Phone_Shop.API
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidAudience = ConfigData.JwtAudience,
-                    ValidIssuer = ConfigData.JwtIssuer,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ConfigData.JwtKey))
+                    ValidAudience = AppConfig.JwtAudience,
+                    ValidIssuer = AppConfig.JwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppConfig.JwtKey))
                 };
             });
 
