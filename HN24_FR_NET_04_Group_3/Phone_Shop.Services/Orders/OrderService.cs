@@ -49,6 +49,7 @@ namespace Phone_Shop.Services.Orders
                     return new ResponseBase(data, "You have to input address", (int)HttpStatusCode.Conflict);
                 }
 
+                _unitOfWork.BeginTransaction();
                 foreach (CartDetailDTO item in data.CartDetailDTOs)
                 {
                     Product? product = _unitOfWork.ProductRepository.GetSingle(null, p => p.ProductId == item.ProductId && p.IsDeleted == false);
@@ -78,8 +79,7 @@ namespace Phone_Shop.Services.Orders
                         await UserHelper.sendEmail("[PHONE SHOP] Notification for new order", body, email);
                     }
                 }
-
-                _unitOfWork.BeginTransaction();
+     
                 Order order = _mapper.Map<Order>(DTO);
                 order.Status = OrderStatus.Pending.ToString();
                 order.CreatedAt = DateTime.Now;
