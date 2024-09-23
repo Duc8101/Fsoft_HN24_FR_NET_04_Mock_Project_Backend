@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Phone_Shop.Common.DTOs.FeedbackDTO;
-using Phone_Shop.Common.Entity;
 using Phone_Shop.Common.Enums;
 using Phone_Shop.Common.Responses;
+using Phone_Shop.DataAccess.Entity;
 using Phone_Shop.DataAccess.Helper;
 using Phone_Shop.DataAccess.UnitOfWorks;
 using Phone_Shop.Services.Base;

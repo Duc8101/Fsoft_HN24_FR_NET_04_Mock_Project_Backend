@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Phone_Shop.Common.Entity
+namespace Phone_Shop.DataAccess.Entity
 {
     [Table("user_client")]
     public partial class UserClient : CommonEntity
@@ -9,7 +9,7 @@ namespace Phone_Shop.Common.Entity
 
         [Column("user_id")]
         public int UserId { get; set; }
-        
+
         [Column("client_id")]
         public int ClientId { get; set; }
 

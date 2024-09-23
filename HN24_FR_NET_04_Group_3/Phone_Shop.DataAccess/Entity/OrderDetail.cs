@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Phone_Shop.Common.Entity
+namespace Phone_Shop.DataAccess.Entity
 {
     [Table("order_detail")]
     public partial class OrderDetail : CommonEntity
     {
-        public OrderDetail() 
+        public OrderDetail()
         {
             Feedbacks = new HashSet<Feedback>();
         }
@@ -39,6 +39,6 @@ namespace Phone_Shop.Common.Entity
         public virtual Order Order { get; set; } = null!;
         public virtual Product Product { get; set; } = null!;
 
-        public virtual ICollection<Feedback> Feedbacks { get; set;}
+        public virtual ICollection<Feedback> Feedbacks { get; set; }
     }
 }

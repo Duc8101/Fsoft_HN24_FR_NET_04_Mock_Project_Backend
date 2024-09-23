@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Phone_Shop.Common.Configuration;
-using Phone_Shop.Common.Entity;
+using Phone_Shop.DataAccess.Entity;
 using System.Globalization;
 using System.Reflection.PortableExecutable;
 

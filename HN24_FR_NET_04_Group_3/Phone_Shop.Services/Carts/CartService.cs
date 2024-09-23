@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Phone_Shop.Common.DTOs.CartDTO;
-using Phone_Shop.Common.Entity;
 using Phone_Shop.Common.Responses;
+using Phone_Shop.DataAccess.Entity;
 using Phone_Shop.DataAccess.UnitOfWorks;
 using Phone_Shop.Services.Base;
 using System.Linq.Expressions;

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Phone_Shop.Common.Entity
+namespace Phone_Shop.DataAccess.Entity
 {
     [Table("feedback")]
     public class Feedback : CommonEntity
@@ -31,7 +31,7 @@ namespace Phone_Shop.Common.Entity
         public int? ReplyId { get; set; }
 
         [Column("rate")]
-        [Range((int) FeedBackRate.Min, (int)FeedBackRate.Max)]
+        [Range((int)FeedBackRate.Min, (int)FeedBackRate.Max)]
         public int? Rate { get; set; }
 
         public virtual OrderDetail OrderDetail { get; set; } = null!;

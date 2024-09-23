@@ -2,7 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using MimeKit;
 using Phone_Shop.Common.Configuration;
-using Phone_Shop.Common.Entity;
+using Phone_Shop.DataAccess.Entity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;

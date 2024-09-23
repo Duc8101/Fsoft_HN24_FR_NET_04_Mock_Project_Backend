@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Phone_Shop.Common.Entity
+namespace Phone_Shop.DataAccess.Entity
 {
     [Table("role")]
     public partial class Role : CommonEntity
@@ -19,7 +19,7 @@ namespace Phone_Shop.Common.Entity
 
         [Required]
         [Column("role_name")]
-        [MaxLength((int) RoleMaxLength.Role_Name)]
+        [MaxLength((int)RoleMaxLength.Role_Name)]
         public string RoleName { get; set; } = null!;
 
         public virtual ICollection<User> Users { get; set; }
