@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Phone_Shop.API.Middleware;
 using Phone_Shop.Common.Configuration;
 using Phone_Shop.DataAccess.DBContext;
 using Phone_Shop.DataAccess.Repositories.Common;
@@ -106,6 +107,7 @@ namespace Phone_Shop.API
             // Configure the HTTP request pipeline.
 
             app.UseHttpsRedirection();
+            app.UseMiddleware<UnauthorizedMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();  
             app.UseSwagger();
