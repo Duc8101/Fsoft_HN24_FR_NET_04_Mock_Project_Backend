@@ -6,7 +6,6 @@ using Phone_Shop.DataAccess.Entity;
 using Phone_Shop.DataAccess.Helper;
 using Phone_Shop.DataAccess.UnitOfWorks;
 using Phone_Shop.Services.Base;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Net;
 
@@ -105,7 +104,7 @@ namespace Phone_Shop.Services.Categories
                     sort = null;
                 }
 
-                IQueryable<Category> query = _unitOfWork.CategoryRepository.GetAll(null, sort);
+                IQueryable<Category> query = _unitOfWork.CategoryRepository.GetAll(null, sort, c => c.IsDeleted == false);
                 List<Category> categories = query.ToList();
                 List<CategoryListDTO> data = _mapper.Map<List<CategoryListDTO>>(categories);
                 return new ResponseBase(data);
@@ -121,7 +120,11 @@ namespace Phone_Shop.Services.Categories
             try
             {
                 Func<IQueryable<Category>, IQueryable<Category>> sort = item => item.OrderByDescending(p => p.UpdateAt);
-                List<Expression<Func<Category, bool>>> predicates = new List<Expression<Func<Category, bool>>>();
+                List<Expression<Func<Category, bool>>> predicates = new List<Expression<Func<Category, bool>>>()
+                {
+                    c => c.IsDeleted == false,
+                };
+
                 if (name != null && name.Trim().Length > 0)
                 {
                     predicates.Add(p => p.CategoryName == name.Trim());
