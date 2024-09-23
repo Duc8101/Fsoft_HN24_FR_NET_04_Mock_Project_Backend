@@ -28,7 +28,7 @@ namespace Phone_Shop.DataAccess.Helper
 
         public static string getAccessToken(User user, DateTime expireDate)
         {
-            byte[] key = Encoding.UTF8.GetBytes(ConfigData.JwtKey);
+            byte[] key = Encoding.UTF8.GetBytes(AppConfig.JwtKey);
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(key);
             SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -40,8 +40,8 @@ namespace Phone_Shop.DataAccess.Helper
                 new Claim(ClaimTypes.Role, user.Role.RoleName),
             };
 
-            JwtSecurityToken security = new JwtSecurityToken(ConfigData.JwtIssuer,
-                ConfigData.JwtAudience, claims, expires: expireDate,
+            JwtSecurityToken security = new JwtSecurityToken(AppConfig.JwtIssuer,
+                AppConfig.JwtAudience, claims, expires: expireDate,
                 signingCredentials: credentials);
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
             // get access token
@@ -52,7 +52,7 @@ namespace Phone_Shop.DataAccess.Helper
         {
             // create message to send
             MimeMessage mime = new MimeMessage();
-            MailboxAddress mailFrom = MailboxAddress.Parse(ConfigData.MailUser);
+            MailboxAddress mailFrom = MailboxAddress.Parse(AppConfig.MailUser);
             MailboxAddress mailTo = MailboxAddress.Parse(to);
             mime.From.Add(mailFrom);
             mime.To.Add(mailTo);
@@ -60,8 +60,8 @@ namespace Phone_Shop.DataAccess.Helper
             mime.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
             // send message
             SmtpClient smtp = new SmtpClient();
-            smtp.Connect(ConfigData.MailHost);
-            smtp.Authenticate(ConfigData.MailUser, ConfigData.MailPassword);
+            smtp.Connect(AppConfig.MailHost);
+            smtp.Authenticate(AppConfig.MailUser, AppConfig.MailPassword);
             await smtp.SendAsync(mime);
             smtp.Disconnect(true);
         }

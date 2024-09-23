@@ -80,5 +80,22 @@ namespace Phone_Shop.API.Controllers
 
             return _service.Delete(productId, userId);
         }
+
+        [HttpPut]
+        public ResponseBase Update([Required] CartUpdateDTO DTO)
+        {
+            string? UserId = getUserId();
+            if (UserId == null)
+            {
+                return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);
+            }
+
+            if (!int.TryParse(UserId, out int userId))
+            {
+                return new ResponseBase($"User id login {UserId} not valid", (int)HttpStatusCode.Conflict);
+            }
+
+            return _service.Update(DTO, userId);
+        }
     }
 }

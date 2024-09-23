@@ -8,5 +8,6 @@ namespace Phone_Shop.Services.Carts
         ResponseBase List(int userId, string username);
         ResponseBase Create(CartCreateDTO DTO, int userId);
         ResponseBase Delete(int productId, int userId);
+        ResponseBase Update(CartUpdateDTO DTO, int userId);
     }
 }

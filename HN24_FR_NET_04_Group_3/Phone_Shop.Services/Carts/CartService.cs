@@ -116,5 +116,39 @@ namespace Phone_Shop.Services.Carts
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }
+
+        public ResponseBase Update(CartUpdateDTO DTO, int userId)
+        {
+            try
+            {
+                Product? product = _unitOfWork.ProductRepository.GetSingle(null, p => p.ProductId == DTO.ProductId && p.IsDeleted == false);
+                if (product == null)
+                {
+                    return new ResponseBase($"Not found product with id = {DTO.ProductId}", (int)HttpStatusCode.NotFound);
+                }
+
+                Cart? cart = _unitOfWork.CartRepository.GetFirst(null, c => c.ProductId == DTO.ProductId && c.CustomerId == userId);
+                if (cart == null)
+                {
+                    return new ResponseBase("Cart doesn't exist", (int)HttpStatusCode.NotFound);
+                }
+
+                if (DTO.Quantity < 1)
+                {
+                    return new ResponseBase("Quantity at least 1", (int)HttpStatusCode.Conflict);
+                }
+
+                _unitOfWork.BeginTransaction();
+                cart.Quantity = DTO.Quantity;
+                _unitOfWork.CartRepository.Update(cart);
+                _unitOfWork.Commit();
+                return new ResponseBase(true);
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.RollBack();
+                return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
+            }
+        }
     }
 }
