@@ -88,14 +88,11 @@ namespace Phone_Shop.Services.Orders
 
                 foreach (CartDetailDTO detail in DTO.CartDetailDTOs)
                 {
-                    Cart? cart = _unitOfWork.CartRepository.GetFirst(null, c => c.ProductId == detail.ProductId && c.CustomerId == DTO.CustomerId);
-                    if (cart == null)
+                    Cart? cart = _unitOfWork.CartRepository.GetFirst(null, c => c.ProductId == detail.ProductId && c.CustomerId == userId);
+                    if (cart != null)
                     {
-                        _unitOfWork.RollBack();
-                        return new ResponseBase("Not found cart", (int)HttpStatusCode.NotFound);
+                        _unitOfWork.CartRepository.Delete(cart);
                     }
-
-                    _unitOfWork.CartRepository.Delete(cart);
                 }
 
                 _unitOfWork.Commit();
