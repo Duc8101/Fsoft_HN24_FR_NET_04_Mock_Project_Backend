@@ -27,40 +27,28 @@ namespace Phone_Shop.Services.Orders
         {
             try
             {
-                Func<IQueryable<Cart>, IQueryable<Cart>> include = item => item.Include(c => c.Product).Include(c => c.Customer);
-                Expression<Func<Cart, bool>> predicateCart = c => c.CustomerId == userId;
-                IQueryable<Cart> queryCart = _unitOfWork.CartRepository.GetAll(include, null, predicateCart);
-                List<Cart> carts = queryCart.ToList();
-
-                if (carts.Count == 0)
+                if (DTO.CartDetailDTOs.Count == 0)
                 {
                     return new ResponseBase("You can't checkout when your cart is empty", (int)HttpStatusCode.Conflict);
                 }
 
-                List<CartDetailDTO> cartDetailDTOs = _mapper.Map<List<CartDetailDTO>>(carts);
-                CartListDTO data = new CartListDTO()
-                {
-                    CartDetailDTOs = cartDetailDTOs,
-                    Customer = carts[0].Customer.Username,
-                };
-
                 if (StringHelper.isStringNullOrEmpty(DTO.Address))
                 {
-                    return new ResponseBase(data, "You have to input address", (int)HttpStatusCode.Conflict);
+                    return new ResponseBase("You have to input address", (int)HttpStatusCode.Conflict);
                 }
 
                 _unitOfWork.BeginTransaction();
-                foreach (CartDetailDTO item in data.CartDetailDTOs)
+                foreach (CartDetailDTO item in DTO.CartDetailDTOs)
                 {
                     Product? product = _unitOfWork.ProductRepository.GetSingle(null, p => p.ProductId == item.ProductId && p.IsDeleted == false);
                     if (product == null)
                     {
-                        return new ResponseBase(data, $"Product '{item.ProductName}' not exist!!!", (int)HttpStatusCode.NotFound);
+                        return new ResponseBase($"Product '{item.ProductName}' not exist!!!", (int)HttpStatusCode.NotFound);
                     }
 
                     if (product.Quantity < item.Quantity)
                     {
-                        return new ResponseBase(data, $"Product '{item.ProductName}' not have enough quantity!!!", (int)HttpStatusCode.Conflict);
+                        return new ResponseBase($"Product '{item.ProductName}' not have enough quantity!!!", (int)HttpStatusCode.Conflict);
                     }
 
                     product.Quantity = product.Quantity - item.Quantity;
@@ -79,7 +67,7 @@ namespace Phone_Shop.Services.Orders
                         await UserHelper.sendEmail("[PHONE SHOP] Notification for new order", body, email);
                     }
                 }
-     
+
                 Order order = _mapper.Map<Order>(DTO);
                 order.Status = OrderStatus.Pending.ToString();
                 order.CreatedAt = DateTime.Now;
@@ -88,7 +76,7 @@ namespace Phone_Shop.Services.Orders
                 order.CustomerId = userId;
                 _unitOfWork.OrderRepository.Add(order);
 
-                List<OrderDetail> orderDetails = _mapper.Map<List<OrderDetail>>(data.CartDetailDTOs);
+                List<OrderDetail> orderDetails = _mapper.Map<List<OrderDetail>>(DTO.CartDetailDTOs);
                 orderDetails.ForEach(detail =>
                 {
                     detail.OrderId = order.OrderId;
@@ -97,9 +85,21 @@ namespace Phone_Shop.Services.Orders
                 });
 
                 _unitOfWork.OrderDetailRepository.AddMultiple(orderDetails);
-                _unitOfWork.CartRepository.DeleteMultiple(carts);
+
+                foreach (CartDetailDTO detail in DTO.CartDetailDTOs)
+                {
+                    Cart? cart = _unitOfWork.CartRepository.GetFirst(null, c => c.ProductId == detail.ProductId && c.CustomerId == DTO.CustomerId);
+                    if (cart == null)
+                    {
+                        _unitOfWork.RollBack();
+                        return new ResponseBase("Not found cart", (int)HttpStatusCode.NotFound);
+                    }
+
+                    _unitOfWork.CartRepository.Delete(cart);
+                }
+
                 _unitOfWork.Commit();
-                return new ResponseBase(data, "Check out successful");
+                return new ResponseBase(true, "Check out successful");
             }
             catch (Exception ex)
             {
@@ -239,7 +239,7 @@ namespace Phone_Shop.Services.Orders
                             return StatusUpdateShipFailAndOrderStatusApproved(order, DTO, data, orderDetails);
                         }
 
-                        return new ResponseBase(data, $"You can only change order status to '{OrderStatus.Ship_Fail.getDescription()}' for orders '{OrderStatus.Approved}' " + 
+                        return new ResponseBase(data, $"You can only change order status to '{OrderStatus.Ship_Fail.getDescription()}' for orders '{OrderStatus.Approved}' " +
                             $"And when changing to '{OrderStatus.Ship_Fail.getDescription()}', you can't update anymore", (int)HttpStatusCode.Conflict);
 
                     default:

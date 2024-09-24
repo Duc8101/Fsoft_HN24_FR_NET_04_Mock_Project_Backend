@@ -2,7 +2,6 @@
 {
     public class CartDetailDTO : CartCreateDTO
     {
-        public int CartId { get; set; }
         public string ProductName { get; set; } = null!;
         public string Image { get; set; } = null!;
         public decimal Price { get; set; }
