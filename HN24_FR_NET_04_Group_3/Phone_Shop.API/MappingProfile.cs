@@ -9,7 +9,6 @@ using Phone_Shop.Common.DTOs.UserDTO;
 using Phone_Shop.Common.Enums;
 using Phone_Shop.DataAccess.Entity;
 using Phone_Shop.DataAccess.Helper;
-using Phone_Shop.Services.Orders;
 
 namespace Phone_Shop.API
 {
@@ -43,7 +42,7 @@ namespace Phone_Shop.API
                 .ForMember(des => des.ProductName, map => map.MapFrom(src => src.ProductName.Trim()))
                 .ForMember(des => des.Image, map => map.MapFrom(src => src.Image.Trim()))
                 .ForMember(des => des.Description, map => map.MapFrom(src => StringHelper.getStringValue(src.Description)));
-            
+
             CreateMap<Product, ProductListDTO>()
                .ForMember(des => des.CategoryName, map => map.MapFrom(src => src.Category.CategoryName));
 
@@ -66,8 +65,8 @@ namespace Phone_Shop.API
                 .ForMember(des => des.CategoryName, map => map.MapFrom(src => src.CategoryName.Trim()));
 
             CreateMap<Feedback, FeedbackListDTO>()
-                .ForMember(des => des.CreatorName, map => map.MapFrom(src => src.Creator.Username))
-                .ForMember(des => des.RepliedName, map => map.MapFrom(src => src.Reply == null ? null : src.Reply.Creator.Username));
+                .ForMember(des => des.CreatorName, map => map.MapFrom(src => src.Creator.FullName))
+                .ForMember(des => des.RepliedName, map => map.MapFrom(src => src.Reply == null ? null : src.Reply.Creator.FullName));
         }
     }
 }
