@@ -121,7 +121,7 @@ namespace Phone_Shop.Services.Orders
                     predicate = o => o.OrderId == orderId;
                 }
 
-                Order? order = _unitOfWork.OrderRepository.GetSingle(item => item.Include(o => o.OrderDetails), predicate);
+                Order? order = _unitOfWork.OrderRepository.GetSingle(item => item.Include(o => o.OrderDetails).ThenInclude(o => o.Feedbacks), predicate);
                 if (order == null)
                 {
                     return new ResponseBase("Not found order", (int)HttpStatusCode.NotFound);

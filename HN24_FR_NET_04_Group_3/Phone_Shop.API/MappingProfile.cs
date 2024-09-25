@@ -49,7 +49,8 @@ namespace Phone_Shop.API
                 .ForMember(des => des.Username, map => map.MapFrom(src => src.Customer.Username))
                 .ForMember(des => des.OrderDate, map => map.MapFrom(src => src.CreatedAt.ToString("yyyy-MM-dd h:mm:ss tt")));
 
-            CreateMap<OrderDetail, OrderDetailListDTO>();
+            CreateMap<OrderDetail, OrderDetailListDTO>()
+                .ForMember(des => des.isFeedBack, map => map.MapFrom(src => !src.Feedbacks.Any()));
 
             CreateMap<FeedbackCreateDTO, Feedback>()
                 .ForMember(des => des.Comment, map => map.MapFrom(src => src.Comment.Trim()));
