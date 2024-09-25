@@ -153,8 +153,7 @@ namespace Phone_Shop.Services.Orders
                     predicates.Add(o => o.Status == status.Trim());
                 }
 
-                Func<IQueryable<Order>, IQueryable<Order>> sort = item => item.OrderBy(o => o.Status == OrderStatus.Pending.ToString() ? 0 : 1)
-                .OrderByDescending(o => o.UpdateAt);
+                Func<IQueryable<Order>, IQueryable<Order>> sort = item => item.OrderByDescending(o => o.CreatedAt);
                 IQueryable<Order> query = _unitOfWork.OrderRepository.GetAll(include, sort, predicates.ToArray());
                 List<Order> orders = query.ToList();
                 List<OrderListDTO> list = _mapper.Map<List<OrderListDTO>>(orders);
@@ -254,7 +253,7 @@ namespace Phone_Shop.Services.Orders
         {
             // if order status is already approved
             order.UpdateAt = DateTime.Now;
-            order.Note = StringHelper.getStringValue(DTO.Note);
+            order.Note += order.UpdateAt.ToString("dd/MM/yyyy HH:mm") + " " + order.Status + " " + DTO.Note + ". ";
 
             _unitOfWork.BeginTransaction();
             _unitOfWork.OrderRepository.Update(order);
@@ -266,8 +265,7 @@ namespace Phone_Shop.Services.Orders
         {
             order.Status = OrderStatus.Approved.ToString();
             order.UpdateAt = DateTime.Now;
-            order.Note = StringHelper.getStringValue(DTO.Note);
-
+            order.Note += order.UpdateAt.ToString("dd/MM/yyyy HH:mm") + " " + order.Status + " " + DTO.Note + ". ";
             _unitOfWork.BeginTransaction();
 
             foreach (OrderDetail detail in orderDetails)
@@ -311,8 +309,7 @@ namespace Phone_Shop.Services.Orders
 
             order.Status = OrderStatus.Rejected.ToString();
             order.UpdateAt = DateTime.Now;
-            order.Note = StringHelper.getStringValue(DTO.Note);
-
+            order.Note += order.UpdateAt.ToString("dd/MM/yyyy HH:mm") + " " + order.Status + " " + DTO.Note + ". ";
             _unitOfWork.BeginTransaction();
             _unitOfWork.OrderRepository.Update(order);
             _unitOfWork.Commit();
@@ -323,8 +320,7 @@ namespace Phone_Shop.Services.Orders
         {
             order.Status = OrderStatus.Done.ToString();
             order.UpdateAt = DateTime.Now;
-            order.Note = StringHelper.getStringValue(DTO.Note);
-
+            order.Note += order.UpdateAt.ToString("dd/MM/yyyy HH:mm") + " " + order.Status + " " + DTO.Note + ". ";
             _unitOfWork.BeginTransaction();
             _unitOfWork.OrderRepository.Update(order);
             _unitOfWork.Commit();
@@ -357,8 +353,7 @@ namespace Phone_Shop.Services.Orders
 
             order.Status = OrderStatus.Ship_Fail.getDescription();
             order.UpdateAt = DateTime.Now;
-            order.Note = StringHelper.getStringValue(DTO.Note);
-
+            order.Note += order.UpdateAt.ToString("dd/MM/yyyy HH:mm") + " " + order.Status + " " + DTO.Note + ". ";
             _unitOfWork.OrderRepository.Update(order);
             _unitOfWork.Commit();
             return new ResponseBase(data, "Update successful");
