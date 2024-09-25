@@ -153,7 +153,7 @@ namespace Phone_Shop.Services.Orders
                     predicates.Add(o => o.Status == status.Trim());
                 }
 
-                Func<IQueryable<Order>, IQueryable<Order>> sort = item => item.OrderByDescending(o => o.UpdateAt);
+                Func<IQueryable<Order>, IQueryable<Order>> sort = item => item.OrderByDescending(o => o.CreatedAt);
                 IQueryable<Order> query = _unitOfWork.OrderRepository.GetAll(include, sort, predicates.ToArray());
                 List<Order> orders = query.ToList();
                 List<OrderListDTO> list = _mapper.Map<List<OrderListDTO>>(orders);
