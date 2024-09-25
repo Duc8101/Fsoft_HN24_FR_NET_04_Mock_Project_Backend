@@ -290,6 +290,8 @@ namespace Phone_Shop.Services.Users
                 // set token expire
                 userClient.ExpireDate = DateTime.Now;
                 userClient.UpdateAt = DateTime.Now;
+
+                _unitOfWork.UserClientRepository.Update(userClient);
                 _unitOfWork.Commit();
                 return new ResponseBase(true, "Logout successful");
             }
