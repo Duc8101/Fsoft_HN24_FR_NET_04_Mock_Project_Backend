@@ -7,5 +7,7 @@ namespace Phone_Shop.Services.Feedbacks
     {
         ResponseBase Create(FeedbackCreateDTO DTO, int creatorId);
         ResponseBase Reply(FeedbackReplyDTO DTO, int creatorId);
+        ResponseBase GetFeedbacksByProductId(int productId);
+        ResponseBase GetFeedbacksByOrderDetailId(int orderDetailId);
     }
 }

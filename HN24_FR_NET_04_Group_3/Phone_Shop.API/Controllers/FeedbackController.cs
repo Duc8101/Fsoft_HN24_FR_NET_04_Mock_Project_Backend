@@ -12,7 +12,6 @@ namespace Phone_Shop.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
     public class FeedbackController : BaseAPIController
     {
 
@@ -24,6 +23,7 @@ namespace Phone_Shop.API.Controllers
         }
 
         [HttpPost("create-feedback")]
+        [Authorize]
         [Role(Roles.Customer)]
         public ResponseBase Create([Required] FeedbackCreateDTO DTO)
         {
@@ -42,6 +42,7 @@ namespace Phone_Shop.API.Controllers
         }
 
         [HttpPost("reply-feedback")]
+        [Authorize]
         [Role(Roles.Admin)]
         public ResponseBase Reply([Required] FeedbackReplyDTO DTO)
         {
@@ -57,6 +58,19 @@ namespace Phone_Shop.API.Controllers
             }
 
             return _service.Reply(DTO, userId);
+        }
+
+        [HttpGet("get-feedbacks-by-product-id")]
+        public ResponseBase GetFeedbacksByProductId([Required] int productId)
+        {
+            return _service.GetFeedbacksByProductId(productId);
+        }
+
+        [HttpGet("get-feedbacks-by-order-detail-id")]
+        [Authorize]
+        public ResponseBase GetFeedbacksByOrderDetailId([Required] int orderDetailId)
+        {
+            return _service.GetFeedbacksByOrderDetailId(orderDetailId);
         }
     }
 }

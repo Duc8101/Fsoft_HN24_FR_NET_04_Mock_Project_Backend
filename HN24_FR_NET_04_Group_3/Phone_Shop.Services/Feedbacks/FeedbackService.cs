@@ -32,7 +32,7 @@ namespace Phone_Shop.Services.Feedbacks
                     return new ResponseBase($"This order doesn't belong to you", (int)HttpStatusCode.Conflict);
                 }
 
-                if(detail.Order.Status != OrderStatus.Done.ToString())
+                if (detail.Order.Status != OrderStatus.Done.ToString())
                 {
                     return new ResponseBase($"You can only create feedback when your order status is '${OrderStatus.Done}'", (int)HttpStatusCode.Conflict);
                 }
@@ -60,6 +60,49 @@ namespace Phone_Shop.Services.Feedbacks
             catch (Exception ex)
             {
                 _unitOfWork.RollBack();
+                return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
+            }
+
+        }
+
+        public ResponseBase GetFeedbacksByOrderDetailId(int orderDetailId)
+        {
+            try
+            {
+                Func<IQueryable<Feedback>, IQueryable<Feedback>> include = item => item.Include(f => f.Creator).Include(f => f.Reply)
+                .ThenInclude(f => f!.Creator);
+
+                Func<IQueryable<Feedback>, IQueryable<Feedback>> sort = item => item.OrderByDescending(f => f.CreatedAt);
+
+                IQueryable<Feedback> query = _unitOfWork.FeedbackRepository.GetAll(include, sort, f => f.OrderDetailId == orderDetailId);
+                List<Feedback> feedbacks = query.ToList();
+
+                List<FeedbackListDTO> data = _mapper.Map<List<FeedbackListDTO>>(feedbacks);
+                return new ResponseBase(data);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
+            }
+        }
+
+        public ResponseBase GetFeedbacksByProductId(int productId)
+        {
+            try
+            {
+                Func<IQueryable<Feedback>, IQueryable<Feedback>> include = item => item.Include(f => f.Creator).Include(f => f.Reply)
+                .ThenInclude(f => f!.Creator);
+
+                Func<IQueryable<Feedback>, IQueryable<Feedback>> sort = item => item.OrderByDescending(f => f.CreatedAt);
+
+                IQueryable<Feedback> query = _unitOfWork.FeedbackRepository.GetAll(include, sort, f => f.OrderDetail.ProductId == productId);
+                List<Feedback> feedbacks = query.ToList();
+
+                List<FeedbackListDTO> data = _mapper.Map<List<FeedbackListDTO>>(feedbacks);
+                return new ResponseBase(data);
+            }
+            catch (Exception ex)
+            {
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
 
