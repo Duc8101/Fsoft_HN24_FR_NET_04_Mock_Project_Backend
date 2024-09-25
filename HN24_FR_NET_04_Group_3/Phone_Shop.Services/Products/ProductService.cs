@@ -125,7 +125,7 @@ namespace Phone_Shop.Services.Products
             try
             {
                 Func<IQueryable<Product>, IQueryable<Product>> include = item => item.Include(p => p.Category);
-                Func<IQueryable<Product>, IQueryable<Product>> sort = item => item.OrderBy(p => p.Price);
+                Func<IQueryable<Product>, IQueryable<Product>> sort = item => item.OrderByDescending(p => p.UpdateAt);
                 List<Expression<Func<Product, bool>>> predicates = new List<Expression<Func<Product, bool>>>()
                 {
                     p => p.IsDeleted == false,
