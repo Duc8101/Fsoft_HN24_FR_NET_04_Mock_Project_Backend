@@ -96,7 +96,7 @@ namespace Phone_Shop.Services.Feedbacks
                 Func<IQueryable<Feedback>, IQueryable<Feedback>> sort = item => item.OrderByDescending(f => f.CreatedAt);
 
                 IQueryable<Feedback> query = _unitOfWork.FeedbackRepository.GetAll(include, sort, f => f.OrderDetail.ProductId == productId);
-                List<Feedback> feedbacks = query.ToList();
+                List<Feedback> feedbacks = query.ToList().Where(f => f.Rate != null).ToList();
 
                 List<FeedbackListDTO> data = _mapper.Map<List<FeedbackListDTO>>(feedbacks);
                 return new ResponseBase(data);

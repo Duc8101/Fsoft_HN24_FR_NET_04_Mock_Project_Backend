@@ -65,6 +65,8 @@ namespace Phone_Shop.API
                 .ForMember(des => des.CategoryName, map => map.MapFrom(src => src.CategoryName.Trim()));
 
             CreateMap<Feedback, FeedbackListDTO>()
+                .ForMember(des => des.FeedBackReplies, map => map.MapFrom(src => src.InversionReply))
+                .ForMember(des => des.username, map => map.MapFrom(src => src.Creator.Username))
                 .ForMember(des => des.CreatorName, map => map.MapFrom(src => src.Creator.FullName))
                 .ForMember(des => des.RepliedName, map => map.MapFrom(src => src.Reply == null ? null : src.Reply.Creator.FullName));
         }
