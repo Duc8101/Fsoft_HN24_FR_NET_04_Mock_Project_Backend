@@ -253,7 +253,7 @@ namespace Phone_Shop.Services.Orders
         {
             // if order status is already approved
             order.UpdateAt = DateTime.Now;
-            order.Note = StringHelper.getStringValue(DTO.Note);
+            order.Note += order.UpdateAt.ToString("dd/MM/yyyy HH:mm") + " " + order.Status + " " + DTO.Note + ". ";
 
             _unitOfWork.BeginTransaction();
             _unitOfWork.OrderRepository.Update(order);
@@ -265,8 +265,7 @@ namespace Phone_Shop.Services.Orders
         {
             order.Status = OrderStatus.Approved.ToString();
             order.UpdateAt = DateTime.Now;
-            order.Note = StringHelper.getStringValue(DTO.Note);
-
+            order.Note += order.UpdateAt.ToString("dd/MM/yyyy HH:mm") + " " + order.Status + " " + DTO.Note + ". ";
             _unitOfWork.BeginTransaction();
 
             foreach (OrderDetail detail in orderDetails)
@@ -310,8 +309,7 @@ namespace Phone_Shop.Services.Orders
 
             order.Status = OrderStatus.Rejected.ToString();
             order.UpdateAt = DateTime.Now;
-            order.Note = StringHelper.getStringValue(DTO.Note);
-
+            order.Note += order.UpdateAt.ToString("dd/MM/yyyy HH:mm") + " " + order.Status + " " + DTO.Note + ". ";
             _unitOfWork.BeginTransaction();
             _unitOfWork.OrderRepository.Update(order);
             _unitOfWork.Commit();
@@ -322,8 +320,7 @@ namespace Phone_Shop.Services.Orders
         {
             order.Status = OrderStatus.Done.ToString();
             order.UpdateAt = DateTime.Now;
-            order.Note = StringHelper.getStringValue(DTO.Note);
-
+            order.Note += order.UpdateAt.ToString("dd/MM/yyyy HH:mm") + " " + order.Status + " " + DTO.Note + ". ";
             _unitOfWork.BeginTransaction();
             _unitOfWork.OrderRepository.Update(order);
             _unitOfWork.Commit();
@@ -356,8 +353,7 @@ namespace Phone_Shop.Services.Orders
 
             order.Status = OrderStatus.Ship_Fail.getDescription();
             order.UpdateAt = DateTime.Now;
-            order.Note = StringHelper.getStringValue(DTO.Note);
-
+            order.Note += order.UpdateAt.ToString("dd/MM/yyyy HH:mm") + " " + order.Status + " " + DTO.Note + ". ";
             _unitOfWork.OrderRepository.Update(order);
             _unitOfWork.Commit();
             return new ResponseBase(data, "Update successful");
