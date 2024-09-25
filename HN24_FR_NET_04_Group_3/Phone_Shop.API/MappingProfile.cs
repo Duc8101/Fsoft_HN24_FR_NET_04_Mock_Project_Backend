@@ -6,8 +6,10 @@ using Phone_Shop.Common.DTOs.OrderDetailDTO;
 using Phone_Shop.Common.DTOs.OrderDTO;
 using Phone_Shop.Common.DTOs.ProductDTO;
 using Phone_Shop.Common.DTOs.UserDTO;
+using Phone_Shop.Common.Enums;
 using Phone_Shop.DataAccess.Entity;
 using Phone_Shop.DataAccess.Helper;
+using Phone_Shop.Services.Orders;
 
 namespace Phone_Shop.API
 {
@@ -50,7 +52,7 @@ namespace Phone_Shop.API
                 .ForMember(des => des.OrderDate, map => map.MapFrom(src => src.CreatedAt.ToString("yyyy-MM-dd h:mm:ss tt")));
 
             CreateMap<OrderDetail, OrderDetailListDTO>()
-                .ForMember(des => des.isFeedBack, map => map.MapFrom(src => !src.Feedbacks.Any()));
+                .ForMember(des => des.isFeedBack, map => map.MapFrom(src => src.Feedbacks.Any(f => f.OrderDetail.Order.Status == OrderStatus.Done.ToString())));
 
             CreateMap<FeedbackCreateDTO, Feedback>()
                 .ForMember(des => des.Comment, map => map.MapFrom(src => src.Comment.Trim()));
