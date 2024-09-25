@@ -75,15 +75,8 @@ namespace Phone_Shop.Services.Carts
                 }
 
                 _unitOfWork.BeginTransaction();
-                if (cart.Quantity == 1)
-                {
-                    _unitOfWork.CartRepository.Delete(cart);
-                }
-                else
-                {
-                    cart.Quantity--;
-                    _unitOfWork.CartRepository.Update(cart);
-                }
+
+                _unitOfWork.CartRepository.Delete(cart);
 
                 _unitOfWork.Commit();
                 return new ResponseBase(true);
