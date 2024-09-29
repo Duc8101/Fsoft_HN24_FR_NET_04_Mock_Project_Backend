@@ -1,5 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Phone_Shop.API.Middleware;
@@ -74,7 +76,8 @@ namespace Phone_Shop.API
             }));
 
             // register db context
-            builder.Services.AddDbContext<PhoneShopContext>();
+            builder.Services.AddDbContext<PhoneShopContext>(options =>
+                            options.UseSqlServer(AppConfig.SqlConnection)); 
 
             // register auto mapper
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
