@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Phone_Shop.Common.DTOs.CategoryDTO;
 using Phone_Shop.Common.Paging;
 using Phone_Shop.Common.Responses;
@@ -52,10 +53,15 @@ namespace Phone_Shop.Services.Categories
             try
             {
 
-                Category? category = _unitOfWork.CategoryRepository.GetSingle(null, p => p.CategoryId == categoryId && p.IsDeleted == false);
+                Category? category = _unitOfWork.CategoryRepository.GetSingle(p => p.Include(c => c.Products), p => p.CategoryId == categoryId && p.IsDeleted == false);
                 if (category == null)
                 {
                     return new ResponseBase($"Not found category with id = {categoryId}", (int)HttpStatusCode.NotFound);
+                }
+
+                if (category.Products.Where(p => p.IsDeleted == false).Count() > 0)
+                {
+                    return new ResponseBase($"There are still a product with this category, delete those first!", (int)HttpStatusCode.NotFound);
                 }
 
                 category.IsDeleted = true;
