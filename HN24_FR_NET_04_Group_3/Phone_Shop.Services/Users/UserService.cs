@@ -237,6 +237,7 @@ namespace Phone_Shop.Services.Users
                         userClient.Token = accessToken;
                         userClient.ExpireDate = expireDate;
                         userClient.UpdateAt = dateNow;
+                        _unitOfWork.UserClientRepository.Update(userClient);
                     }
                     else
                     {
