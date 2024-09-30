@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Phone_Shop.Common.Configuration;
 using Phone_Shop.DataAccess.Entity;
 using System.Globalization;
@@ -8,6 +8,9 @@ namespace Phone_Shop.DataAccess.DBContext
 {
     public class PhoneShopContext : DbContext
     {
+
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Product> Products { get; set; }
         public PhoneShopContext()
         {
 
@@ -21,7 +24,6 @@ namespace Phone_Shop.DataAccess.DBContext
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(AppConfig.SqlConnection);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

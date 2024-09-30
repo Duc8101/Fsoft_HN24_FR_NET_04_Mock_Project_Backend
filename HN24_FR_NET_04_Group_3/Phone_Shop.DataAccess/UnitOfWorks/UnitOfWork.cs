@@ -18,40 +18,28 @@ namespace Phone_Shop.DataAccess.UnitOfWorks
         private readonly IRepository<Category> _categoryRepository;
         private readonly IRepository<Feedback> _feedbackRepository;
 
-        public UnitOfWork(PhoneShopContext context, IRepository<User> userRepository, IRepository<Client> clientRepository
-            , IRepository<UserClient> userClientRepository, IRepository<Cart> cartRepository, IRepository<Product> productRepository
-            , IRepository<Order> orderRepository, IRepository<OrderDetail> orderDetailRepository, IRepository<Category> categoryRepository
-            , IRepository<Feedback> feedbackRepository)
+        public UnitOfWork(PhoneShopContext context)
         {
             _context = context;
-            _userRepository = userRepository;
-            _clientRepository = clientRepository;
-            _userClientRepository = userClientRepository;
-            _cartRepository = cartRepository;
-            _productRepository = productRepository;
-            _orderRepository = orderRepository;
-            _orderDetailRepository = orderDetailRepository;
-            _categoryRepository = categoryRepository;
-            _feedbackRepository = feedbackRepository;
         }
 
-        public IRepository<User> UserRepository => _userRepository;
+        public IRepository<User> UserRepository => _userRepository ?? new Repository<User>(_context);
 
-        public IRepository<Client> ClientRepository => _clientRepository;
+        public IRepository<Client> ClientRepository => _clientRepository ?? new Repository<Client>(_context);
 
-        public IRepository<UserClient> UserClientRepository => _userClientRepository;
+        public IRepository<UserClient> UserClientRepository => _userClientRepository ?? new Repository<UserClient>(_context);
 
-        public IRepository<Cart> CartRepository => _cartRepository;
+        public IRepository<Cart> CartRepository => _cartRepository ?? new Repository<Cart>(_context);
 
-        public IRepository<Product> ProductRepository => _productRepository;
+        public IRepository<Product> ProductRepository => _productRepository ?? new Repository<Product>(_context);
 
-        public IRepository<Order> OrderRepository => _orderRepository;
+        public IRepository<Order> OrderRepository => _orderRepository ?? new Repository<Order>(_context);
 
-        public IRepository<OrderDetail> OrderDetailRepository => _orderDetailRepository;
+        public IRepository<OrderDetail> OrderDetailRepository => _orderDetailRepository ?? new Repository<OrderDetail>(_context);
 
-        public IRepository<Category> CategoryRepository => _categoryRepository;
+        public IRepository<Category> CategoryRepository => _categoryRepository ?? new Repository<Category>(_context);
 
-        public IRepository<Feedback> FeedbackRepository => _feedbackRepository;
+        public IRepository<Feedback> FeedbackRepository => _feedbackRepository ?? new Repository<Feedback>(_context);
 
         public void BeginTransaction()
         {

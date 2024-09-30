@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Phone_Shop.Common", "Phone_
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Phone_Shop.Services", "Phone_Shop.Services\Phone_Shop.Services.csproj", "{26093B95-8447-4926-A87B-3FAB2B2162EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Phone_Shop.DataAccess", "Phone_Shop.DataAccess\Phone_Shop.DataAccess.csproj", "{217D4EA5-9979-4C2C-BD39-4E7030F74F18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Phone_Shop.DataAccess", "Phone_Shop.DataAccess\Phone_Shop.DataAccess.csproj", "{217D4EA5-9979-4C2C-BD39-4E7030F74F18}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{78B33044-0A84-412F-8C54-7CF01A1F7638}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{217D4EA5-9979-4C2C-BD39-4E7030F74F18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{217D4EA5-9979-4C2C-BD39-4E7030F74F18}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{217D4EA5-9979-4C2C-BD39-4E7030F74F18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78B33044-0A84-412F-8C54-7CF01A1F7638}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78B33044-0A84-412F-8C54-7CF01A1F7638}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78B33044-0A84-412F-8C54-7CF01A1F7638}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78B33044-0A84-412F-8C54-7CF01A1F7638}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
