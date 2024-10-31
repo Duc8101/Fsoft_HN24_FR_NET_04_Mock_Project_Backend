@@ -37,7 +37,7 @@ namespace Phone_Shop.Services.Feedbacks
                     return new ResponseBase($"You can only create feedback when your order status is '${OrderStatus.Done}'", (int)HttpStatusCode.Conflict);
                 }
 
-                if (StringHelper.isStringNullOrEmpty(DTO.Comment))
+                if (DTO.Comment.Trim().Length == 0)
                 {
                     return new ResponseBase("Comment not empty", (int)HttpStatusCode.Conflict);
                 }
@@ -52,6 +52,7 @@ namespace Phone_Shop.Services.Feedbacks
                 feedback.ReplyId = null;
                 feedback.CreatedAt = DateTime.Now;
                 feedback.UpdateAt = DateTime.Now;
+
                 _unitOfWork.BeginTransaction();
                 _unitOfWork.FeedbackRepository.Add(feedback);
                 _unitOfWork.Commit();
@@ -59,7 +60,7 @@ namespace Phone_Shop.Services.Feedbacks
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
+                _unitOfWork.Rollback();
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
 
@@ -75,9 +76,7 @@ namespace Phone_Shop.Services.Feedbacks
                 Func<IQueryable<Feedback>, IQueryable<Feedback>> sort = item => item.OrderByDescending(f => f.CreatedAt);
 
                 IQueryable<Feedback> query = _unitOfWork.FeedbackRepository.GetAll(include, sort, f => f.OrderDetailId == orderDetailId);
-                List<Feedback> feedbacks = query.ToList();
-
-                List<FeedbackListDTO> data = _mapper.Map<List<FeedbackListDTO>>(feedbacks);
+                List<FeedbackListDTO> data = query.Select(f => _mapper.Map<FeedbackListDTO>(f)).ToList();
                 return new ResponseBase(data);
             }
             catch (Exception ex)
@@ -95,10 +94,8 @@ namespace Phone_Shop.Services.Feedbacks
 
                 Func<IQueryable<Feedback>, IQueryable<Feedback>> sort = item => item.OrderByDescending(f => f.CreatedAt);
 
-                IQueryable<Feedback> query = _unitOfWork.FeedbackRepository.GetAll(include, sort, f => f.OrderDetail.ProductId == productId);
-                List<Feedback> feedbacks = query.ToList().Where(f => f.Rate != null).ToList();
-
-                List<FeedbackListDTO> data = _mapper.Map<List<FeedbackListDTO>>(feedbacks);
+                IQueryable<Feedback> query = _unitOfWork.FeedbackRepository.GetAll(include, sort, f => f.OrderDetail.ProductId == productId && f.Rate.HasValue);
+                List<FeedbackListDTO> data = query.Select(f => _mapper.Map<FeedbackListDTO>(f)).ToList();
                 return new ResponseBase(data);
             }
             catch (Exception ex)
@@ -118,7 +115,7 @@ namespace Phone_Shop.Services.Feedbacks
                     return new ResponseBase($"Not found replied feedback with id = {DTO.RepliedFeedbackId}", (int)HttpStatusCode.NotFound);
                 }
 
-                if (StringHelper.isStringNullOrEmpty(DTO.Comment))
+                if (DTO.Comment.Trim().Length == 0)
                 {
                     return new ResponseBase("Comment not empty", (int)HttpStatusCode.Conflict);
                 }
@@ -138,7 +135,7 @@ namespace Phone_Shop.Services.Feedbacks
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
+                _unitOfWork.Rollback();
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }

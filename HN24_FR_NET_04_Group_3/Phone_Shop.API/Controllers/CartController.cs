@@ -27,13 +27,13 @@ namespace Phone_Shop.API.Controllers
         [HttpGet]
         public ResponseBase List()
         {
-            string? UserId = getUserId();
+            string? UserId = GetUserId();
             if (UserId == null)
             {
                 return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);
             }
 
-            string? username = getUsername();
+            string? username = GetUsername();
             if (username == null)
             {
                 return new ResponseBase($"Not found username login", (int)HttpStatusCode.NotFound);
@@ -50,7 +50,7 @@ namespace Phone_Shop.API.Controllers
         [HttpPost]
         public ResponseBase Create([Required] CartCreateDTO DTO)
         {
-            string? UserId = getUserId();
+            string? UserId = GetUserId();
             if (UserId == null)
             {
                 return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);
@@ -67,7 +67,7 @@ namespace Phone_Shop.API.Controllers
         [HttpDelete]
         public ResponseBase Delete([Required] int productId)
         {
-            string? UserId = getUserId();
+            string? UserId = GetUserId();
             if (UserId == null)
             {
                 return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);
@@ -84,7 +84,7 @@ namespace Phone_Shop.API.Controllers
         [HttpPut]
         public ResponseBase Update([Required] CartUpdateDTO DTO)
         {
-            string? UserId = getUserId();
+            string? UserId = GetUserId();
             if (UserId == null)
             {
                 return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);

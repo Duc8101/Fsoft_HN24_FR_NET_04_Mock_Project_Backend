@@ -20,7 +20,7 @@ namespace Phone_Shop.API
             CreateMap<RegisterDTO, User>()
                 .ForMember(des => des.FullName, map => map.MapFrom(src => src.FullName.Trim()))
                 .ForMember(des => des.Email, map => map.MapFrom(src => src.Email.Trim()))
-                .ForMember(des => des.Address, map => map.MapFrom(src => StringHelper.getStringValue(src.Address)))
+                .ForMember(des => des.Address, map => map.MapFrom(src => src.Address == null || src.Address.Trim().Length == 0 ? null : src.Address.Trim()))
                 .ForMember(des => des.Password, map => map.MapFrom(src => UserHelper.HashPassword(src.Password)));
 
             CreateMap<User, UserDetailDTO>();
@@ -41,7 +41,7 @@ namespace Phone_Shop.API
             CreateMap<ProductCreateUpdateDTO, Product>()
                 .ForMember(des => des.ProductName, map => map.MapFrom(src => src.ProductName.Trim()))
                 .ForMember(des => des.Image, map => map.MapFrom(src => src.Image.Trim()))
-                .ForMember(des => des.Description, map => map.MapFrom(src => StringHelper.getStringValue(src.Description)));
+                .ForMember(des => des.Description, map => map.MapFrom(src => src.Description == null || src.Description.Trim().Length == 0 ? null : src.Description.Trim()));
 
             CreateMap<Product, ProductListDTO>()
                .ForMember(des => des.CategoryName, map => map.MapFrom(src => src.Category.CategoryName));

@@ -54,7 +54,7 @@ namespace Phone_Shop.API.Controllers
         [HttpGet("get-all-categories")]
         public ResponseBase GetAll()
         {
-            return _service.GetAll(isAdmin());
+            return _service.GetAll(IsAdmin());
         }
 
         [HttpGet("[action]/{categoryId}")]

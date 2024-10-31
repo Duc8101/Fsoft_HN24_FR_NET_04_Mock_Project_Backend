@@ -27,7 +27,7 @@ namespace Phone_Shop.API.Controllers
         [Role(Roles.Customer)]
         public async Task<ResponseBase> Create([Required] OrderCreateDTO DTO)
         {
-            string? UserId = getUserId();
+            string? UserId = GetUserId();
             if (UserId == null)
             {
                 return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);
@@ -44,13 +44,12 @@ namespace Phone_Shop.API.Controllers
         [HttpGet]
         public ResponseBase List(string? status, [Required] int pageSize = 10, [Required] int currentPage = 1)
         {
-
-            if (isAdmin())
+            if (IsAdmin())
             {
                 return _service.List(status, pageSize, currentPage, null);
             }
 
-            string? UserId = getUserId();
+            string? UserId = GetUserId();
             if (UserId == null)
             {
                 return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);
@@ -67,13 +66,12 @@ namespace Phone_Shop.API.Controllers
         [HttpGet("{orderId}")]
         public ResponseBase Detail([Required] int orderId)
         {
-
-            if (isAdmin())
+            if (IsAdmin())
             {
                 return _service.Detail(orderId, null);
             }
 
-            string? UserId = getUserId();
+            string? UserId = GetUserId();
             if (UserId == null)
             {
                 return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);

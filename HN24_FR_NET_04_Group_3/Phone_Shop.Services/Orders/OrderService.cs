@@ -4,10 +4,10 @@ using Phone_Shop.Common.DTOs.CartDTO;
 using Phone_Shop.Common.DTOs.OrderDetailDTO;
 using Phone_Shop.Common.DTOs.OrderDTO;
 using Phone_Shop.Common.Enums;
+using Phone_Shop.Common.Extensions;
 using Phone_Shop.Common.Paging;
 using Phone_Shop.Common.Responses;
 using Phone_Shop.DataAccess.Entity;
-using Phone_Shop.DataAccess.Extensions;
 using Phone_Shop.DataAccess.Helper;
 using Phone_Shop.DataAccess.UnitOfWorks;
 using Phone_Shop.Services.Base;
@@ -32,7 +32,7 @@ namespace Phone_Shop.Services.Orders
                     return new ResponseBase("You can't checkout when your cart is empty", (int)HttpStatusCode.Conflict);
                 }
 
-                if (StringHelper.isStringNullOrEmpty(DTO.Address))
+                if (DTO.Address.Trim().Length == 0)
                 {
                     return new ResponseBase("You have to input address", (int)HttpStatusCode.Conflict);
                 }
@@ -64,7 +64,7 @@ namespace Phone_Shop.Services.Orders
                 {
                     foreach (string email in emails)
                     {
-                        await UserHelper.sendEmail("[PHONE SHOP] Notification for new order", body, email);
+                        await UserHelper.SendEmail("[PHONE SHOP] Notification for new order", body, email);
                     }
                 }
 
@@ -88,7 +88,7 @@ namespace Phone_Shop.Services.Orders
 
                 foreach (CartDetailDTO detail in DTO.CartDetailDTOs)
                 {
-                    Cart? cart = _unitOfWork.CartRepository.GetFirst(null, c => c.ProductId == detail.ProductId && c.CustomerId == userId);
+                    Cart? cart = _unitOfWork.CartRepository.GetFirst(null, null, c => c.ProductId == detail.ProductId && c.CustomerId == userId);
                     if (cart != null)
                     {
                         _unitOfWork.CartRepository.Delete(cart);
@@ -100,7 +100,7 @@ namespace Phone_Shop.Services.Orders
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
+                _unitOfWork.Rollback();
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }
@@ -109,9 +109,7 @@ namespace Phone_Shop.Services.Orders
         {
             try
             {
-
                 Expression<Func<Order, bool>> predicate;
-
                 if (userId.HasValue)
                 {
                     predicate = o => o.OrderId == orderId && o.CustomerId == userId;
@@ -127,8 +125,10 @@ namespace Phone_Shop.Services.Orders
                     return new ResponseBase("Not found order", (int)HttpStatusCode.NotFound);
                 }
 
-                List<OrderDetail> orderDetails = order.OrderDetails.ToList();
-                List<OrderDetailListDTO> data = _mapper.Map<List<OrderDetailListDTO>>(orderDetails);
+                IQueryable<OrderDetail> query = _unitOfWork.OrderDetailRepository.GetAll(item => item.Include(od => od.Feedbacks)
+                , null, od => od.OrderId == orderId);
+
+                List<OrderDetailListDTO> data = query.Select(od => _mapper.Map<OrderDetailListDTO>(od)).ToList();
                 return new ResponseBase(data);
             }
             catch (Exception ex)
@@ -155,8 +155,7 @@ namespace Phone_Shop.Services.Orders
 
                 Func<IQueryable<Order>, IQueryable<Order>> sort = item => item.OrderByDescending(o => o.CreatedAt);
                 IQueryable<Order> query = _unitOfWork.OrderRepository.GetAll(include, sort, predicates.ToArray());
-                List<Order> orders = query.ToList();
-                List<OrderListDTO> list = _mapper.Map<List<OrderListDTO>>(orders);
+                List<OrderListDTO> list = query.Select(o => _mapper.Map<OrderListDTO>(o)).ToList();
 
                 Pagination<OrderListDTO> data = new Pagination<OrderListDTO>()
                 {
@@ -178,15 +177,14 @@ namespace Phone_Shop.Services.Orders
         {
             try
             {
-                Order? order = _unitOfWork.OrderRepository.GetSingle(item => item.Include(o => o.Customer)
-                .Include(o => o.OrderDetails), o => o.OrderId == orderId);
+                Order? order = _unitOfWork.OrderRepository.GetSingle(item => item.Include(o => o.Customer), o => o.OrderId == orderId);
                 if (order == null)
                 {
                     return new ResponseBase("Not found order", (int)HttpStatusCode.NotFound);
                 }
 
-                List<OrderDetail> orderDetails = order.OrderDetails.ToList();
-                List<OrderDetailListDTO> data = _mapper.Map<List<OrderDetailListDTO>>(orderDetails);
+                IQueryable<OrderDetail> query = _unitOfWork.OrderDetailRepository.GetAll(null, null, od => od.OrderId == orderId);
+                List<OrderDetailListDTO> data = query.Select(od => _mapper.Map<OrderDetailListDTO>(od)).ToList();
 
                 switch (DTO.Status)
                 {
@@ -201,7 +199,7 @@ namespace Phone_Shop.Services.Orders
                         // if order status is pending
                         if (order.Status == OrderStatus.Pending.ToString())
                         {
-                            return await StatusUpdateApprovedAndOrderStatusPending(order, DTO, data, orderDetails);
+                            return await StatusUpdateApprovedAndOrderStatusPending(order, DTO, data);
                         }
 
                         return new ResponseBase(data, $"You can only change status to '{OrderStatus.Approved}' for orders status '{OrderStatus.Pending}'", (int)HttpStatusCode.Conflict);
@@ -232,11 +230,11 @@ namespace Phone_Shop.Services.Orders
                         // if order status is approved
                         if (order.Status == OrderStatus.Approved.ToString())
                         {
-                            return StatusUpdateShipFailAndOrderStatusApproved(order, DTO, data, orderDetails);
+                            return StatusUpdateShipFailAndOrderStatusApproved(order, DTO, data);
                         }
 
-                        return new ResponseBase(data, $"You can only change order status to '{OrderStatus.Ship_Fail.getDescription()}' for orders '{OrderStatus.Approved}' " +
-                            $"And when changing to '{OrderStatus.Ship_Fail.getDescription()}', you can't update anymore", (int)HttpStatusCode.Conflict);
+                        return new ResponseBase(data, $"You can only change order status to '{OrderStatus.Ship_Fail.GetDescription()}' for orders '{OrderStatus.Approved}' " +
+                            $"And when changing to '{OrderStatus.Ship_Fail.GetDescription()}', you can't update anymore", (int)HttpStatusCode.Conflict);
 
                     default:
                         return new ResponseBase("Order status invalid", (int)HttpStatusCode.Conflict);
@@ -244,7 +242,7 @@ namespace Phone_Shop.Services.Orders
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
+                _unitOfWork.Rollback();
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }
@@ -261,25 +259,24 @@ namespace Phone_Shop.Services.Orders
             return new ResponseBase(data, "Update successful");
         }
 
-        private async Task<ResponseBase> StatusUpdateApprovedAndOrderStatusPending(Order order, OrderUpdateDTO DTO, List<OrderDetailListDTO> data, List<OrderDetail> orderDetails)
+        private async Task<ResponseBase> StatusUpdateApprovedAndOrderStatusPending(Order order, OrderUpdateDTO DTO, List<OrderDetailListDTO> data)
         {
             order.Status = OrderStatus.Approved.ToString();
             order.UpdateAt = DateTime.Now;
             order.Note += order.UpdateAt.ToString("dd/MM/yyyy HH:mm") + " " + order.Status + " " + DTO.Note + ". ";
             _unitOfWork.BeginTransaction();
 
-            foreach (OrderDetail detail in orderDetails)
+            foreach (OrderDetailListDTO detail in data)
             {
                 Product? product = _unitOfWork.ProductRepository.GetSingle(null, p => p.ProductId == detail.ProductId && p.IsDeleted == false);
                 if (product == null)
                 {
-                    _unitOfWork.RollBack();
                     return new ResponseBase(data, $"Product '{detail.ProductName}' not exist!!!", (int)HttpStatusCode.NotFound);
                 }
             }
 
-            string body = UserHelper.BodyEmailForApproveOrder(orderDetails);
-            await UserHelper.sendEmail("[PHONE SHOPPING] Notification for approve order", body, order.Customer.Email);
+            string body = UserHelper.BodyEmailForApproveOrder(data);
+            await UserHelper.SendEmail("[PHONE SHOPPING] Notification for approve order", body, order.Customer.Email);
             _unitOfWork.OrderRepository.Update(order);
             _unitOfWork.Commit();
             return new ResponseBase(data, "Update successful");
@@ -288,7 +285,7 @@ namespace Phone_Shop.Services.Orders
         private ResponseBase StatusUpdateRejectedAndOrderStatusPending(Order order, OrderUpdateDTO DTO, List<OrderDetailListDTO> data)
         {
             // if not note
-            if (StringHelper.isStringNullOrEmpty(DTO.Note))
+            if (DTO.Note == null || DTO.Note.Trim().Length == 0)
             {
                 return new ResponseBase(data, $"You have to note when order '{OrderStatus.Rejected}'", (int)HttpStatusCode.Conflict);
             }
@@ -298,7 +295,6 @@ namespace Phone_Shop.Services.Orders
                 Product? product = _unitOfWork.ProductRepository.GetSingle(null, p => p.ProductId == detail.ProductId && p.IsDeleted == false);
                 if (product == null)
                 {
-                    _unitOfWork.RollBack();
                     return new ResponseBase(data, $"Product '{detail.ProductName}' not exist!!!", (int)HttpStatusCode.NotFound);
                 }
 
@@ -327,22 +323,21 @@ namespace Phone_Shop.Services.Orders
             return new ResponseBase(data, "Update successful");
         }
 
-        private ResponseBase StatusUpdateShipFailAndOrderStatusApproved(Order order, OrderUpdateDTO DTO, List<OrderDetailListDTO> data, List<OrderDetail> orderDetails)
+        private ResponseBase StatusUpdateShipFailAndOrderStatusApproved(Order order, OrderUpdateDTO DTO, List<OrderDetailListDTO> data)
         {
             // if not note
-            if (StringHelper.isStringNullOrEmpty(DTO.Note))
+            if (DTO.Note == null || DTO.Note.Trim().Length == 0)
             {
-                return new ResponseBase(data, $"You have to note when order '{OrderStatus.Ship_Fail.getDescription()}'", (int)HttpStatusCode.Conflict);
+                return new ResponseBase(data, $"You have to note when order '{OrderStatus.Ship_Fail.GetDescription()}'", (int)HttpStatusCode.Conflict);
             }
 
             _unitOfWork.BeginTransaction();
 
-            foreach (OrderDetail detail in orderDetails)
+            foreach (OrderDetailListDTO detail in data)
             {
                 Product? product = _unitOfWork.ProductRepository.GetSingle(null, p => p.ProductId == detail.ProductId && p.IsDeleted == false);
                 if (product == null)
                 {
-                    _unitOfWork.RollBack();
                     return new ResponseBase(data, $"Product '{detail.ProductName}' not exist!!!", (int)HttpStatusCode.NotFound);
                 }
 
@@ -351,7 +346,7 @@ namespace Phone_Shop.Services.Orders
                 _unitOfWork.ProductRepository.Update(product);
             }
 
-            order.Status = OrderStatus.Ship_Fail.getDescription();
+            order.Status = OrderStatus.Ship_Fail.GetDescription();
             order.UpdateAt = DateTime.Now;
             order.Note += order.UpdateAt.ToString("dd/MM/yyyy HH:mm") + " " + order.Status + " " + DTO.Note + ". ";
             _unitOfWork.OrderRepository.Update(order);

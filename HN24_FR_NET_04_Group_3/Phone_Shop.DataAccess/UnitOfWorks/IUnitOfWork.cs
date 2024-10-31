@@ -6,8 +6,7 @@ namespace Phone_Shop.DataAccess.UnitOfWorks
     public interface IUnitOfWork : IDisposable
     {
         IRepository<User> UserRepository { get; }
-        IRepository<Client> ClientRepository { get; }
-        IRepository<UserClient> UserClientRepository { get; }
+        IRepository<UserToken> UserTokenRepository { get; }
         IRepository<Cart> CartRepository { get; }
         IRepository<Product> ProductRepository { get; }
         IRepository<Order> OrderRepository { get; }
@@ -17,9 +16,9 @@ namespace Phone_Shop.DataAccess.UnitOfWorks
 
         void Commit();
         void BeginTransaction();
-        void RollBack();
+        void Rollback();
         Task CommitAsync();
         Task BeginTransactionAsync();
-        Task RollBackAsync();
+        Task RollbackAsync();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Phone_Shop.Common.Configuration
 {
-    public class AppConfig
+    public class WebConfig
     {
         public static string SqlConnection => getConfigValue("ConnectionStrings:DefaultConnection");
         public static string JwtKey => getConfigValue("Jwt:Key");

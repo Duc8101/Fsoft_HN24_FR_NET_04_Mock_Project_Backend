@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using MimeKit;
 using Phone_Shop.Common.Configuration;
+using Phone_Shop.Common.DTOs.OrderDetailDTO;
 using Phone_Shop.DataAccess.Entity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -26,9 +27,9 @@ namespace Phone_Shop.DataAccess.Helper
             return builder.ToString();
         }
 
-        public static string getAccessToken(User user, DateTime expireDate)
+        public static string GetAccessToken(User user, DateTime expireDate)
         {
-            byte[] key = Encoding.UTF8.GetBytes(AppConfig.JwtKey);
+            byte[] key = Encoding.UTF8.GetBytes(WebConfig.JwtKey);
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(key);
             SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -40,19 +41,19 @@ namespace Phone_Shop.DataAccess.Helper
                 new Claim(ClaimTypes.Role, user.Role.RoleName),
             };
 
-            JwtSecurityToken security = new JwtSecurityToken(AppConfig.JwtIssuer,
-                AppConfig.JwtAudience, claims, expires: expireDate,
+            JwtSecurityToken security = new JwtSecurityToken(WebConfig.JwtIssuer,
+                WebConfig.JwtAudience, claims, expires: expireDate,
                 signingCredentials: credentials);
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
             // get access token
             return handler.WriteToken(security);
         }
 
-        public static async Task sendEmail(string subject, string body, string to)
+        public static async Task SendEmail(string subject, string body, string to)
         {
             // create message to send
             MimeMessage mime = new MimeMessage();
-            MailboxAddress mailFrom = MailboxAddress.Parse(AppConfig.MailUser);
+            MailboxAddress mailFrom = MailboxAddress.Parse(WebConfig.MailUser);
             MailboxAddress mailTo = MailboxAddress.Parse(to);
             mime.From.Add(mailFrom);
             mime.To.Add(mailTo);
@@ -60,8 +61,8 @@ namespace Phone_Shop.DataAccess.Helper
             mime.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
             // send message
             SmtpClient smtp = new SmtpClient();
-            smtp.Connect(AppConfig.MailHost);
-            smtp.Authenticate(AppConfig.MailUser, AppConfig.MailPassword);
+            smtp.Connect(WebConfig.MailHost);
+            smtp.Authenticate(WebConfig.MailUser, WebConfig.MailPassword);
             await smtp.SendAsync(mime);
             smtp.Disconnect(true);
         }
@@ -96,10 +97,10 @@ namespace Phone_Shop.DataAccess.Helper
             return body;
         }
 
-        public static string BodyEmailForApproveOrder(List<OrderDetail> list)
+        public static string BodyEmailForApproveOrder(List<OrderDetailListDTO> list)
         {
             StringBuilder builder = new StringBuilder("<p>Information order detail:</p>\n");
-            foreach (OrderDetail item in list)
+            foreach (OrderDetailListDTO item in list)
             {
                 builder.AppendLine($"<p> - {item.ProductName} , quantity: {item.Quantity}</p>");
             }

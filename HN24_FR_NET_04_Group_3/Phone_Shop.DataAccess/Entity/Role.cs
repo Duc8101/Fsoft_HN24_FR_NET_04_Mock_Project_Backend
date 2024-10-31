@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Phone_Shop.DataAccess.Entity
 {
     [Table("role")]
-    public partial class Role : CommonEntity
+    public partial class Role
     {
         public Role()
         {

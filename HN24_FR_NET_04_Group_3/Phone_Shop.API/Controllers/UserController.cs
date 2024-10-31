@@ -44,7 +44,7 @@ namespace Phone_Shop.API.Controllers
         [Authorize]
         public ResponseBase Detail()
         {
-            string? UserId = getUserId();
+            string? UserId = GetUserId();
             if (UserId == null)
             {
                 return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);
@@ -62,7 +62,7 @@ namespace Phone_Shop.API.Controllers
         [Authorize]
         public ResponseBase UpdateProfile([Required] ProfileDTO DTO)
         {
-            string? UserId = getUserId();
+            string? UserId = GetUserId();
             if(UserId == null)
             {
                 return new ResponseBase($"Not found user id login", (int) HttpStatusCode.NotFound);
@@ -80,7 +80,7 @@ namespace Phone_Shop.API.Controllers
         [Authorize]
         public ResponseBase ChangePassword([Required] ChangePasswordDTO DTO)
         {
-            string? UserId = getUserId();
+            string? UserId = GetUserId();
             if (UserId == null)
             {
                 return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);
@@ -104,7 +104,7 @@ namespace Phone_Shop.API.Controllers
         [Authorize]
         public ResponseBase Logout()
         {
-            string? UserId = getUserId();
+            string? UserId = GetUserId();
             if (UserId == null)
             {
                 return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);

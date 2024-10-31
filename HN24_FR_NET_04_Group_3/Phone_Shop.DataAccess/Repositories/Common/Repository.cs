@@ -77,9 +77,13 @@ namespace Phone_Shop.DataAccess.Repositories.Common
             return query.SingleOrDefault();
         }
 
-        public TEntity? GetFirst(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates)
+        public TEntity? GetFirst(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, Func<IQueryable<TEntity>, IQueryable<TEntity>>? sort, params Expression<Func<TEntity, bool>>[] predicates)
         {
             IQueryable<TEntity> query = GetQuery(include, predicates);
+            if (sort != null)
+            {
+                query = sort(query);
+            }
             return query.FirstOrDefault();
         }
 
@@ -89,9 +93,13 @@ namespace Phone_Shop.DataAccess.Repositories.Common
             return await query.SingleOrDefaultAsync();
         }
 
-        public async Task<TEntity?> GetFirstAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates)
+        public async Task<TEntity?> GetFirstAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, Func<IQueryable<TEntity>, IQueryable<TEntity>>? sort, params Expression<Func<TEntity, bool>>[] predicates)
         {
             IQueryable<TEntity> query = GetQuery(include, predicates);
+            if (sort != null)
+            {
+                query = sort(query);
+            }
             return await query.FirstOrDefaultAsync();
         }
 

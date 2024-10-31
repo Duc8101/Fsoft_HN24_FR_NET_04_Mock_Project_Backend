@@ -8,7 +8,7 @@ namespace Phone_Shop.DataAccess.Repositories.Queries
 
         TEntity? GetSingle(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates);
 
-        TEntity? GetFirst(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates);
+        TEntity? GetFirst(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, Func<IQueryable<TEntity>, IQueryable<TEntity>>? sort, params Expression<Func<TEntity, bool>>[] predicates);
 
         TEntity? FindById(object id);
 
@@ -18,7 +18,7 @@ namespace Phone_Shop.DataAccess.Repositories.Queries
 
         Task<TEntity?> GetSingleAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates);
 
-        Task<TEntity?> GetFirstAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, params Expression<Func<TEntity, bool>>[] predicates);
+        Task<TEntity?> GetFirstAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include, Func<IQueryable<TEntity>, IQueryable<TEntity>>? sort, params Expression<Func<TEntity, bool>>[] predicates);
 
         Task<TEntity?> FindByIdAsync(object id);
 

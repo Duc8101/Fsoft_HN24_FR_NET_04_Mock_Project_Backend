@@ -1,10 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Phone_Shop.API.Middleware;
 using Phone_Shop.Common.Configuration;
 using Phone_Shop.DataAccess.DBContext;
 using Phone_Shop.DataAccess.Repositories.Common;
@@ -62,9 +60,9 @@ namespace Phone_Shop.API
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidAudience = AppConfig.JwtAudience,
-                    ValidIssuer = AppConfig.JwtIssuer,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppConfig.JwtKey))
+                    ValidAudience = WebConfig.JwtAudience,
+                    ValidIssuer = WebConfig.JwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(WebConfig.JwtKey))
                 };
             });
 
@@ -77,7 +75,7 @@ namespace Phone_Shop.API
 
             // register db context
             builder.Services.AddDbContext<PhoneShopContext>(options =>
-                            options.UseSqlServer(AppConfig.SqlConnection)); 
+                            options.UseSqlServer(WebConfig.SqlConnection));
 
             // register auto mapper
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -110,9 +108,8 @@ namespace Phone_Shop.API
             // Configure the HTTP request pipeline.
 
             app.UseHttpsRedirection();
-            app.UseMiddleware<UnauthorizedMiddleware>();
             app.UseAuthentication();
-            app.UseAuthorization();  
+            app.UseAuthorization();
             app.UseSwagger();
             app.UseSwaggerUI();
             app.UseCors("AllowOrigin");

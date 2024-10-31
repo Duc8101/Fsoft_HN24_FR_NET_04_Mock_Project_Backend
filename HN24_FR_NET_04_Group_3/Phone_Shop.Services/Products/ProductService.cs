@@ -5,7 +5,6 @@ using Phone_Shop.Common.Enums;
 using Phone_Shop.Common.Paging;
 using Phone_Shop.Common.Responses;
 using Phone_Shop.DataAccess.Entity;
-using Phone_Shop.DataAccess.Helper;
 using Phone_Shop.DataAccess.UnitOfWorks;
 using Phone_Shop.Services.Base;
 using System.Linq.Expressions;
@@ -25,12 +24,12 @@ namespace Phone_Shop.Services.Products
         {
             try
             {
-                if (StringHelper.isStringNullOrEmpty(DTO.ProductName))
+                if (DTO.ProductName.Trim().Length == 0)
                 {
                     return new ResponseBase("You have to input product name", (int)HttpStatusCode.Conflict);
                 }
 
-                if (StringHelper.isStringNullOrEmpty(DTO.Image))
+                if (DTO.Image.Trim().Length == 0)
                 {
                     return new ResponseBase("You have to input product image", (int)HttpStatusCode.Conflict);
                 }
@@ -68,7 +67,7 @@ namespace Phone_Shop.Services.Products
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
+                _unitOfWork.Rollback();
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }
@@ -84,6 +83,7 @@ namespace Phone_Shop.Services.Products
                 }
 
                 product.IsDeleted = true;
+
                 _unitOfWork.BeginTransaction();
                 _unitOfWork.ProductRepository.Update(product);
                 _unitOfWork.Commit();
@@ -91,7 +91,7 @@ namespace Phone_Shop.Services.Products
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
+                _unitOfWork.Rollback();
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }
@@ -111,7 +111,6 @@ namespace Phone_Shop.Services.Products
                 // --------------------- set rate for  product ----------------------
                 double? rate = _unitOfWork.FeedbackRepository.GetAll(null, null, f => f.OrderDetail.ProductId == productId).Average(f => f.Rate);
                 data.Rate = rate == null ? 0 : Math.Round(rate.Value, 2);
-
                 return new ResponseBase(data);
             }
             catch (Exception ex)
@@ -141,15 +140,14 @@ namespace Phone_Shop.Services.Products
                     predicates.Add(p => categoryIds.Contains(p.CategoryId));
                 }
 
-                if(priceFrom.HasValue && priceTo.HasValue)
+                if (priceFrom.HasValue && priceTo.HasValue)
                 {
                     predicates.Add(p => p.Price >= priceFrom && p.Price <= priceTo);
                 }
 
                 IQueryable<Product> query = _unitOfWork.ProductRepository.GetAll(include, sort, predicates.ToArray());
-                List<Product> products = query.Skip(pageSize * (currentPage - 1)).Take(pageSize).ToList();
-
-                List<ProductListDTO> list = _mapper.Map<List<ProductListDTO>>(products);
+                List<ProductListDTO> list = query.Skip(pageSize * (currentPage - 1)).Take(pageSize).Select(p => _mapper.Map<ProductListDTO>(p))
+                    .ToList();
 
                 // --------------------- set rate for each product ----------------------
                 list.ForEach(DTO =>
@@ -184,8 +182,8 @@ namespace Phone_Shop.Services.Products
                 .ThenByDescending(p => p.UpdateAt);
 
                 IQueryable<Product> query = _unitOfWork.ProductRepository.GetAll(include, sort, p => p.IsDeleted == false);
-                List<Product> products = query.Skip(pageSize * (currentPage - 1)).Take(pageSize).ToList();
-                List<ProductListDTO> list = _mapper.Map<List<ProductListDTO>>(products);
+                List<ProductListDTO> list = query.Skip(pageSize * (currentPage - 1)).Take(pageSize).Select(p => _mapper.Map<ProductListDTO>(p))
+                    .ToList();
 
                 // --------------------- set rate for each product ----------------------
                 list.ForEach(DTO =>
@@ -220,12 +218,12 @@ namespace Phone_Shop.Services.Products
                     return new ResponseBase($"Not found product with id = {productId}", (int)HttpStatusCode.NotFound);
                 }
 
-                if (StringHelper.isStringNullOrEmpty(DTO.ProductName))
+                if (DTO.ProductName.Trim().Length == 0)
                 {
                     return new ResponseBase("You have to input product name", (int)HttpStatusCode.Conflict);
                 }
 
-                if (StringHelper.isStringNullOrEmpty(DTO.Image))
+                if (DTO.Image.Trim().Length == 0)
                 {
                     return new ResponseBase("You have to input product image", (int)HttpStatusCode.Conflict);
                 }
@@ -255,9 +253,10 @@ namespace Phone_Shop.Services.Products
                 product.CategoryId = DTO.CategoryId;
                 product.Price = DTO.Price;
                 product.Image = DTO.Image.Trim();
-                product.Description = StringHelper.getStringValue(DTO.Description);
+                product.Description = product.Description == null || product.Description.Trim().Length == 0 ? null : product.Description.Trim();
                 product.Quantity = DTO.Quantity;
                 product.UpdateAt = DateTime.Now;
+
                 _unitOfWork.BeginTransaction();
                 _unitOfWork.ProductRepository.Update(product);
                 _unitOfWork.Commit();
@@ -265,7 +264,7 @@ namespace Phone_Shop.Services.Products
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
+                _unitOfWork.Rollback();
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }

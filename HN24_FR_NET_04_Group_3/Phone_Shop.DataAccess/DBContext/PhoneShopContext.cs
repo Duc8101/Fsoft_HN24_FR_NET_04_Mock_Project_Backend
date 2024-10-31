@@ -2,15 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using Phone_Shop.Common.Configuration;
 using Phone_Shop.DataAccess.Entity;
 using System.Globalization;
-using System.Reflection.PortableExecutable;
 
 namespace Phone_Shop.DataAccess.DBContext
 {
     public class PhoneShopContext : DbContext
     {
 
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Product> Products { get; set; }
         public PhoneShopContext()
         {
 
@@ -24,11 +21,11 @@ namespace Phone_Shop.DataAccess.DBContext
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.UseSqlServer(WebConfig.SqlConnection);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserClient>().HasKey(uc => new { uc.ClientId, uc.UserId });
 
             // --------------------------- seed data -----------------------------------
             string format = "yyyy-MM-dd HH:mm:ss.fffffff";
@@ -36,8 +33,8 @@ namespace Phone_Shop.DataAccess.DBContext
             // -------------------- role -------------------------
             List<Role> roles = new List<Role>()
             {
-                new Role(){RoleId = 1 , RoleName = "Admin", CreatedAt = DateTime.ParseExact("2024-07-03 01:46:24.5563385", format, CultureInfo.InvariantCulture), UpdateAt = DateTime.ParseExact("2024-07-03 01:46:24.5563385", format, CultureInfo.InvariantCulture)},
-                new Role(){RoleId = 2 , RoleName = "Customer", CreatedAt = DateTime.ParseExact("2024-07-03 01:46:24.5563389", format, CultureInfo.InvariantCulture), UpdateAt = DateTime.ParseExact("2024-07-03 01:46:24.5563389", format, CultureInfo.InvariantCulture)},
+                new Role(){RoleId = 1 , RoleName = "Admin"},
+                new Role(){RoleId = 2, RoleName = "Customer"},
             };
             modelBuilder.Entity<Role>().HasData(roles);
 

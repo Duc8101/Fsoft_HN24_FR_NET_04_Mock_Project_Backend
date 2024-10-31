@@ -12,7 +12,7 @@ using Phone_Shop.DataAccess.DBContext;
 namespace Phone_Shop.DataAccess.Migrations
 {
     [DbContext(typeof(PhoneShopContext))]
-    [Migration("20240920083925_InitialCreate")]
+    [Migration("20241031151631_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,12 +20,12 @@ namespace Phone_Shop.DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Cart", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Cart", b =>
                 {
                     b.Property<int>("CartId")
                         .ValueGeneratedOnAdd()
@@ -55,7 +55,7 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.ToTable("cart");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Category", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Category", b =>
                 {
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
@@ -129,34 +129,7 @@ namespace Phone_Shop.DataAccess.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Client", b =>
-                {
-                    b.Property<int>("ClientId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("client_id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClientId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("HardwareInfo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("hardware_info");
-
-                    b.Property<DateTime>("UpdateAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("update_at");
-
-                    b.HasKey("ClientId");
-
-                    b.ToTable("client");
-                });
-
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Feedback", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Feedback", b =>
                 {
                     b.Property<int>("FeedbackId")
                         .ValueGeneratedOnAdd()
@@ -205,7 +178,7 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.ToTable("feedback");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Order", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Order", b =>
                 {
                     b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd()
@@ -248,7 +221,7 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.ToTable("order");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.OrderDetail", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.OrderDetail", b =>
                 {
                     b.Property<int>("OrderDetailId")
                         .ValueGeneratedOnAdd()
@@ -300,7 +273,7 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.ToTable("order_detail");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Product", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Product", b =>
                 {
                     b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
@@ -584,7 +557,7 @@ namespace Phone_Shop.DataAccess.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Role", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Role", b =>
                 {
                     b.Property<int>("RoleId")
                         .ValueGeneratedOnAdd()
@@ -593,19 +566,11 @@ namespace Phone_Shop.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("created_at");
-
                     b.Property<string>("RoleName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("role_name");
-
-                    b.Property<DateTime>("UpdateAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("update_at");
 
                     b.HasKey("RoleId");
 
@@ -615,20 +580,16 @@ namespace Phone_Shop.DataAccess.Migrations
                         new
                         {
                             RoleId = 1,
-                            CreatedAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3385),
-                            RoleName = "Admin",
-                            UpdateAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3385)
+                            RoleName = "Admin"
                         },
                         new
                         {
                             RoleId = 2,
-                            CreatedAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3389),
-                            RoleName = "Customer",
-                            UpdateAt = new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3389)
+                            RoleName = "Customer"
                         });
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.User", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
@@ -749,12 +710,8 @@ namespace Phone_Shop.DataAccess.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.UserClient", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.UserToken", b =>
                 {
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int")
-                        .HasColumnName("client_id");
-
                     b.Property<int>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("user_id");
@@ -776,22 +733,20 @@ namespace Phone_Shop.DataAccess.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("update_at");
 
-                    b.HasKey("ClientId", "UserId");
-
-                    b.HasIndex("UserId");
+                    b.HasKey("UserId");
 
                     b.ToTable("user_client");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Cart", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Cart", b =>
                 {
-                    b.HasOne("Phone_Shop.Common.Entity.User", "Customer")
+                    b.HasOne("Phone_Shop.DataAccess.Entity.User", "Customer")
                         .WithMany("Carts")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Phone_Shop.Common.Entity.Product", "Product")
+                    b.HasOne("Phone_Shop.DataAccess.Entity.Product", "Product")
                         .WithMany("Carts")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -802,21 +757,21 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Feedback", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Feedback", b =>
                 {
-                    b.HasOne("Phone_Shop.Common.Entity.User", "Creator")
+                    b.HasOne("Phone_Shop.DataAccess.Entity.User", "Creator")
                         .WithMany("Feedbacks")
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Phone_Shop.Common.Entity.OrderDetail", "OrderDetail")
+                    b.HasOne("Phone_Shop.DataAccess.Entity.OrderDetail", "OrderDetail")
                         .WithMany("Feedbacks")
                         .HasForeignKey("OrderDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Phone_Shop.Common.Entity.Feedback", "Reply")
+                    b.HasOne("Phone_Shop.DataAccess.Entity.Feedback", "Reply")
                         .WithMany("InversionReply")
                         .HasForeignKey("ReplyId");
 
@@ -827,9 +782,9 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.Navigation("Reply");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Order", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Order", b =>
                 {
-                    b.HasOne("Phone_Shop.Common.Entity.User", "Customer")
+                    b.HasOne("Phone_Shop.DataAccess.Entity.User", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -838,15 +793,15 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.OrderDetail", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.OrderDetail", b =>
                 {
-                    b.HasOne("Phone_Shop.Common.Entity.Order", "Order")
+                    b.HasOne("Phone_Shop.DataAccess.Entity.Order", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Phone_Shop.Common.Entity.Product", "Product")
+                    b.HasOne("Phone_Shop.DataAccess.Entity.Product", "Product")
                         .WithMany("OrderDetails")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -857,9 +812,9 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Product", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Product", b =>
                 {
-                    b.HasOne("Phone_Shop.Common.Entity.Category", "Category")
+                    b.HasOne("Phone_Shop.DataAccess.Entity.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -868,9 +823,9 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.User", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.User", b =>
                 {
-                    b.HasOne("Phone_Shop.Common.Entity.Role", "Role")
+                    b.HasOne("Phone_Shop.DataAccess.Entity.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -879,63 +834,50 @@ namespace Phone_Shop.DataAccess.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.UserClient", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.UserToken", b =>
                 {
-                    b.HasOne("Phone_Shop.Common.Entity.Client", "Client")
-                        .WithMany("UserClients")
-                        .HasForeignKey("ClientId")
+                    b.HasOne("Phone_Shop.DataAccess.Entity.User", "User")
+                        .WithOne("UserToken")
+                        .HasForeignKey("Phone_Shop.DataAccess.Entity.UserToken", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Phone_Shop.Common.Entity.User", "User")
-                        .WithMany("UserClients")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Category", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Category", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Client", b =>
-                {
-                    b.Navigation("UserClients");
-                });
-
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Feedback", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Feedback", b =>
                 {
                     b.Navigation("InversionReply");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Order", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Order", b =>
                 {
                     b.Navigation("OrderDetails");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.OrderDetail", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.OrderDetail", b =>
                 {
                     b.Navigation("Feedbacks");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Product", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Product", b =>
                 {
                     b.Navigation("Carts");
 
                     b.Navigation("OrderDetails");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.Role", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.Role", b =>
                 {
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("Phone_Shop.Common.Entity.User", b =>
+            modelBuilder.Entity("Phone_Shop.DataAccess.Entity.User", b =>
                 {
                     b.Navigation("Carts");
 
@@ -943,7 +885,7 @@ namespace Phone_Shop.DataAccess.Migrations
 
                     b.Navigation("Orders");
 
-                    b.Navigation("UserClients");
+                    b.Navigation("UserToken");
                 });
 #pragma warning restore 612, 618
         }

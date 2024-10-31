@@ -28,7 +28,7 @@ namespace Phone_Shop.Services.Carts
                 }
 
                 Expression<Func<Cart, bool>> predicate = c => c.CustomerId == userId && c.ProductId == DTO.ProductId;
-                Cart? cart = _unitOfWork.CartRepository.GetFirst(null, predicate);
+                Cart? cart = _unitOfWork.CartRepository.GetFirst(null, null, predicate);
 
                 _unitOfWork.BeginTransaction();
                 if (cart == null)
@@ -52,7 +52,7 @@ namespace Phone_Shop.Services.Carts
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
+                _unitOfWork.Rollback();
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }
@@ -68,22 +68,21 @@ namespace Phone_Shop.Services.Carts
                 }
 
                 Expression<Func<Cart, bool>> predicate = c => c.CustomerId == userId && c.ProductId == productId;
-                Cart? cart = _unitOfWork.CartRepository.GetFirst(null, predicate);
+                Cart? cart = _unitOfWork.CartRepository.GetFirst(null, null, predicate);
                 if (cart == null)
                 {
                     return new ResponseBase("Not found cart", (int)HttpStatusCode.NotFound);
                 }
 
                 _unitOfWork.BeginTransaction();
-
                 _unitOfWork.CartRepository.Delete(cart);
-
                 _unitOfWork.Commit();
+
                 return new ResponseBase(true);
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
+                _unitOfWork.Rollback();
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }
@@ -94,8 +93,7 @@ namespace Phone_Shop.Services.Carts
             {
                 Func<IQueryable<Cart>, IQueryable<Cart>> include = item => item.Include(c => c.Product);
                 IQueryable<Cart> query = _unitOfWork.CartRepository.GetAll(include, null, c => c.CustomerId == userId);
-                List<Cart> carts = query.ToList();
-                List<CartDetailDTO> cartDetailDTOs = _mapper.Map<List<CartDetailDTO>>(carts);
+                List<CartDetailDTO> cartDetailDTOs = query.Select(c => _mapper.Map<CartDetailDTO>(c)).ToList();
                 CartListDTO data = new CartListDTO()
                 {
                     CartDetailDTOs = cartDetailDTOs,
@@ -120,7 +118,7 @@ namespace Phone_Shop.Services.Carts
                     return new ResponseBase($"Not found product with id = {DTO.ProductId}", (int)HttpStatusCode.NotFound);
                 }
 
-                Cart? cart = _unitOfWork.CartRepository.GetFirst(null, c => c.ProductId == DTO.ProductId && c.CustomerId == userId);
+                Cart? cart = _unitOfWork.CartRepository.GetFirst(null, null, c => c.ProductId == DTO.ProductId && c.CustomerId == userId);
                 if (cart == null)
                 {
                     return new ResponseBase("Cart doesn't exist", (int)HttpStatusCode.NotFound);
@@ -131,15 +129,17 @@ namespace Phone_Shop.Services.Carts
                     return new ResponseBase("Quantity at least 1", (int)HttpStatusCode.Conflict);
                 }
 
-                _unitOfWork.BeginTransaction();
+
                 cart.Quantity = DTO.Quantity;
+
+                _unitOfWork.BeginTransaction();
                 _unitOfWork.CartRepository.Update(cart);
                 _unitOfWork.Commit();
                 return new ResponseBase(true);
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
+                _unitOfWork.Rollback();
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }

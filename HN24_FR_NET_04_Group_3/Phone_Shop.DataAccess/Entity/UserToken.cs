@@ -3,15 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Phone_Shop.DataAccess.Entity
 {
-    [Table("user_client")]
-    public partial class UserClient : CommonEntity
+    [Table("user_token")]
+    public partial class UserToken : CommonEntity
     {
-
+        [Key]
         [Column("user_id")]
         public int UserId { get; set; }
-
-        [Column("client_id")]
-        public int ClientId { get; set; }
 
         [Required]
         [Column("token")]
@@ -20,7 +17,6 @@ namespace Phone_Shop.DataAccess.Entity
         [Column("expire_date")]
         public DateTime ExpireDate { get; set; }
 
-        public virtual Client Client { get; set; } = null!;
         public virtual User User { get; set; } = null!;
     }
 }

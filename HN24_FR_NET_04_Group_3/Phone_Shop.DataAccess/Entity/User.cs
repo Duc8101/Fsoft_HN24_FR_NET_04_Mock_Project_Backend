@@ -11,7 +11,6 @@ namespace Phone_Shop.DataAccess.Entity
         {
             Carts = new HashSet<Cart>();
             Orders = new HashSet<Order>();
-            UserClients = new HashSet<UserClient>();
             Feedbacks = new HashSet<Feedback>();
         }
 
@@ -50,7 +49,7 @@ namespace Phone_Shop.DataAccess.Entity
         public virtual Role Role { get; set; } = null!;
         public virtual ICollection<Cart> Carts { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
-        public virtual ICollection<UserClient> UserClients { get; set; }
+        public virtual UserToken? UserToken { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
     }
 }

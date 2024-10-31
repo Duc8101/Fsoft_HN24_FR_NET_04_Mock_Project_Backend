@@ -27,7 +27,7 @@ namespace Phone_Shop.API.Controllers
         [Role(Roles.Customer)]
         public ResponseBase Create([Required] FeedbackCreateDTO DTO)
         {
-            string? UserId = getUserId();
+            string? UserId = GetUserId();
             if (UserId == null)
             {
                 return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);
@@ -46,7 +46,7 @@ namespace Phone_Shop.API.Controllers
         [Role(Roles.Admin)]
         public ResponseBase Reply([Required] FeedbackReplyDTO DTO)
         {
-            string? UserId = getUserId();
+            string? UserId = GetUserId();
             if (UserId == null)
             {
                 return new ResponseBase($"Not found user id login", (int)HttpStatusCode.NotFound);

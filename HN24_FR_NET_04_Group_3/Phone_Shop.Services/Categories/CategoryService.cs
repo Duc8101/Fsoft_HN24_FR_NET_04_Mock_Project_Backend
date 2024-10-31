@@ -1,10 +1,8 @@
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Phone_Shop.Common.DTOs.CategoryDTO;
 using Phone_Shop.Common.Paging;
 using Phone_Shop.Common.Responses;
 using Phone_Shop.DataAccess.Entity;
-using Phone_Shop.DataAccess.Helper;
 using Phone_Shop.DataAccess.UnitOfWorks;
 using Phone_Shop.Services.Base;
 using System.Linq.Expressions;
@@ -22,11 +20,11 @@ namespace Phone_Shop.Services.Categories
         {
             try
             {
-
-                if (StringHelper.isStringNullOrEmpty(DTO.CategoryName))
+                if (DTO.CategoryName.Trim().Length == 0)
                 {
                     return new ResponseBase("You have to input category name", (int)HttpStatusCode.Conflict);
                 }
+
                 if (_unitOfWork.CategoryRepository.Any(p => p.CategoryName == DTO.CategoryName.Trim() && p.IsDeleted == false))
                 {
                     return new ResponseBase($"Category name '{DTO.CategoryName.Trim()}' already exists", (int)HttpStatusCode.Conflict);
@@ -36,6 +34,7 @@ namespace Phone_Shop.Services.Categories
                 category.CreatedAt = DateTime.Now;
                 category.UpdateAt = DateTime.Now;
                 category.IsDeleted = false;
+
                 _unitOfWork.BeginTransaction();
                 _unitOfWork.CategoryRepository.Add(category);
                 _unitOfWork.Commit();
@@ -43,7 +42,7 @@ namespace Phone_Shop.Services.Categories
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
+                _unitOfWork.Rollback();
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }
@@ -52,19 +51,19 @@ namespace Phone_Shop.Services.Categories
         {
             try
             {
-
-                Category? category = _unitOfWork.CategoryRepository.GetSingle(p => p.Include(c => c.Products), p => p.CategoryId == categoryId && p.IsDeleted == false);
+                Category? category = _unitOfWork.CategoryRepository.GetSingle(null, p => p.CategoryId == categoryId && p.IsDeleted == false);
                 if (category == null)
                 {
                     return new ResponseBase($"Not found category with id = {categoryId}", (int)HttpStatusCode.NotFound);
                 }
 
-                if (category.Products.Where(p => p.IsDeleted == false).Count() > 0)
+                if (_unitOfWork.ProductRepository.Any(p => p.CategoryId == categoryId && p.IsDeleted == false))
                 {
-                    return new ResponseBase($"There are still a product with this category, delete those first!", (int)HttpStatusCode.NotFound);
+                    return new ResponseBase($"There still exists product in this category, delete those first!", (int)HttpStatusCode.NotFound);
                 }
 
                 category.IsDeleted = true;
+
                 _unitOfWork.BeginTransaction();
                 _unitOfWork.CategoryRepository.Update(category);
                 _unitOfWork.Commit();
@@ -72,7 +71,7 @@ namespace Phone_Shop.Services.Categories
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
+                _unitOfWork.Rollback();
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }
@@ -111,8 +110,7 @@ namespace Phone_Shop.Services.Categories
                 }
 
                 IQueryable<Category> query = _unitOfWork.CategoryRepository.GetAll(null, sort, c => c.IsDeleted == false);
-                List<Category> categories = query.ToList();
-                List<CategoryListDTO> data = _mapper.Map<List<CategoryListDTO>>(categories);
+                List<CategoryListDTO> data = query.Select(c => _mapper.Map<CategoryListDTO>(c)).ToList();
                 return new ResponseBase(data);
             }
             catch (Exception ex)
@@ -137,8 +135,7 @@ namespace Phone_Shop.Services.Categories
                 }
 
                 IQueryable<Category> query = _unitOfWork.CategoryRepository.GetAll(null, sort, predicates.ToArray());
-                List<Category> categories = query.Skip(pageSize * (currentPage - 1)).Take(pageSize).ToList();
-                List<CategoryListDTO> list = _mapper.Map<List<CategoryListDTO>>(categories);
+                List<CategoryListDTO> list = query.Skip(pageSize * (currentPage - 1)).Take(pageSize).Select(c => _mapper.Map<CategoryListDTO>(c)).ToList();
                 Pagination<CategoryListDTO> data = new Pagination<CategoryListDTO>
                 {
                     PageSize = pageSize,
@@ -165,7 +162,7 @@ namespace Phone_Shop.Services.Categories
                     return new ResponseBase($"Not found category with id = {categoryId}", (int)HttpStatusCode.NotFound);
                 }
 
-                if (StringHelper.isStringNullOrEmpty(DTO.CategoryName))
+                if (DTO.CategoryName.Trim().Length == 0)
                 {
                     return new ResponseBase("You have to input category name", (int)HttpStatusCode.Conflict);
                 }
@@ -177,6 +174,7 @@ namespace Phone_Shop.Services.Categories
 
                 category.CategoryName = DTO.CategoryName.Trim();
                 category.UpdateAt = DateTime.Now;
+
                 _unitOfWork.BeginTransaction();
                 _unitOfWork.CategoryRepository.Update(category);
                 _unitOfWork.Commit();
@@ -184,7 +182,7 @@ namespace Phone_Shop.Services.Categories
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
+                _unitOfWork.Rollback();
                 return new ResponseBase(ex.Message + " " + ex, (int)HttpStatusCode.InternalServerError);
             }
         }

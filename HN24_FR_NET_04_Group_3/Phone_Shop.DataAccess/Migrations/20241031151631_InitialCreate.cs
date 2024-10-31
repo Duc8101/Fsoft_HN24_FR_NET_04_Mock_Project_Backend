@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -30,29 +29,12 @@ namespace Phone_Shop.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "client",
-                columns: table => new
-                {
-                    client_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    hardware_info = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    update_at = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_client", x => x.client_id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "role",
                 columns: table => new
                 {
                     role_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    role_name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    update_at = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    role_name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -93,7 +75,7 @@ namespace Phone_Shop.DataAccess.Migrations
                     user_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     full_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    phone = table.Column<string>(type: "char(10)", fixedLength : true, nullable: true),
+                    phone = table.Column<string>(type: "char(10)", maxLength: 10, fixedLength: true, nullable: true),
                     email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
@@ -165,11 +147,10 @@ namespace Phone_Shop.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_client",
+                name: "user_token",
                 columns: table => new
                 {
                     user_id = table.Column<int>(type: "int", nullable: false),
-                    client_id = table.Column<int>(type: "int", nullable: false),
                     token = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     expire_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -177,15 +158,9 @@ namespace Phone_Shop.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_user_client", x => new { x.client_id, x.user_id });
+                    table.PrimaryKey("PK_user_token", x => x.user_id);
                     table.ForeignKey(
-                        name: "FK_user_client_client_client_id",
-                        column: x => x.client_id,
-                        principalTable: "client",
-                        principalColumn: "client_id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_user_client_user_user_id",
+                        name: "FK_user_token_user_user_id",
                         column: x => x.user_id,
                         principalTable: "user",
                         principalColumn: "user_id",
@@ -273,11 +248,11 @@ namespace Phone_Shop.DataAccess.Migrations
 
             migrationBuilder.InsertData(
                 table: "role",
-                columns: new[] { "role_id", "created_at", "role_name", "update_at" },
+                columns: new[] { "role_id", "role_name" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3385), "Admin", new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3385) },
-                    { 2, new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3389), "Customer", new DateTime(2024, 7, 3, 1, 46, 24, 556, DateTimeKind.Unspecified).AddTicks(3389) }
+                    { 1, "Admin" },
+                    { 2, "Customer" }
                 });
 
             migrationBuilder.InsertData(
@@ -367,11 +342,6 @@ namespace Phone_Shop.DataAccess.Migrations
                 name: "IX_user_role_id",
                 table: "user",
                 column: "role_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_user_client_user_id",
-                table: "user_client",
-                column: "user_id");
         }
 
         /// <inheritdoc />
@@ -384,13 +354,10 @@ namespace Phone_Shop.DataAccess.Migrations
                 name: "feedback");
 
             migrationBuilder.DropTable(
-                name: "user_client");
+                name: "user_token");
 
             migrationBuilder.DropTable(
                 name: "order_detail");
-
-            migrationBuilder.DropTable(
-                name: "client");
 
             migrationBuilder.DropTable(
                 name: "order");

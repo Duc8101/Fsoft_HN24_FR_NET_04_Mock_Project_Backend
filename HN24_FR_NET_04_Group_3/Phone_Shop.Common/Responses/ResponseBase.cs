@@ -6,7 +6,7 @@ namespace Phone_Shop.Common.Responses
     {
         public int Code { get; set; }
         public string Message { get; set; } = null!;
-        public object Data { get; set; }
+        public object Data { get; set; } = false;
 
         public ResponseBase(object data, string message, int code)
         {
